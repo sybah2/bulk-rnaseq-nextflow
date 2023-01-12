@@ -1,4 +1,0 @@
-TrimmomaticPE: Started with arguments:
- -trimlog lateTroph_Trimlog.txt lateTroph_1.fq lateTroph_2.fq lateTroph_paired_1.fq lateTroph_paired_2.fq ILLUMINACLIP:null:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20
-Multiple cores found: Using 4 threads
-Quality encoding detected as phred64

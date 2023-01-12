@@ -1,6 +1,0 @@
-TrimmomaticPE: Started with arguments:
- -trimlog schizont_Trimlog.txt schizont_1.fq schizont_2.fq schizont_paired_1.fq schizont_paired_2.fq ILLUMINACLIP:null:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20
-Multiple cores found: Using 4 threads
-Quality encoding detected as phred64
-Input Read Pairs: 1000 Both Surviving: 856 (85.60%) Forward Only Surviving: 118 (11.80%) Reverse Only Surviving: 10 (1.00%) Dropped: 16 (1.60%)
-TrimmomaticPE: Completed successfully
