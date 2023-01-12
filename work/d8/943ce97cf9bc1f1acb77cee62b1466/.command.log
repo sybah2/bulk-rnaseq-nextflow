@@ -1,0 +1,6 @@
+TrimmomaticPE: Started with arguments:
+ -trimlog gametocyteII_Trimlog.txt gametocyteII_1.fq gametocyteII_2.fq gametocyteII_paired_1.fq gametocyteII_paired_2.fq ILLUMINACLIP:null:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20
+Multiple cores found: Using 4 threads
+Quality encoding detected as phred64
+Input Read Pairs: 1000 Both Surviving: 860 (86.00%) Forward Only Surviving: 105 (10.50%) Reverse Only Surviving: 16 (1.60%) Dropped: 19 (1.90%)
+TrimmomaticPE: Completed successfully

@@ -1,0 +1,126 @@
+Jan-11 12:41:42.218 [main] DEBUG nextflow.cli.Launcher - $> nextflow run RNA_Seq_Nextflow.nf --isPaired true
+Jan-11 12:41:42.318 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.4
+Jan-11 12:41:42.333 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/saikouybah/.nextflow/plugins; core-plugins: nf-amazon@1.11.2,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.2
+Jan-11 12:41:42.342 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-11 12:41:42.343 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-11 12:41:42.345 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jan-11 12:41:42.355 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-11 12:41:42.368 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/saikouybah/Documents/RNA_Seq_Nexflow/nextflow.config
+Jan-11 12:41:42.369 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/saikouybah/Documents/RNA_Seq_Nexflow/nextflow.config
+Jan-11 12:41:42.383 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jan-11 12:41:42.700 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Jan-11 12:41:42.711 [main] INFO  nextflow.cli.CmdRun - Launching `RNA_Seq_Nextflow.nf` [condescending_hilbert] DSL2 - revision: 9906f85ede
+Jan-11 12:41:42.712 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jan-11 12:41:42.712 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Jan-11 12:41:42.718 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/saikouybah/.nextflow/secrets/store.json
+Jan-11 12:41:42.720 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@403c3a01] - activable => nextflow.secret.LocalSecretsProvider@403c3a01
+Jan-11 12:41:42.758 [main] DEBUG nextflow.Session - Session UUID: 06aad8bf-9ab8-4203-8e20-bd19e5bed8ce
+Jan-11 12:41:42.759 [main] DEBUG nextflow.Session - Run name: condescending_hilbert
+Jan-11 12:41:42.759 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-11 12:41:42.769 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-11 12:41:42.790 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.4 build 5836
+  Created: 09-12-2022 09:58 UTC (09:58 BST)
+  System: Mac OS X 13.1
+  Runtime: Groovy 3.0.13 on OpenJDK 64-Bit Server VM 11.0.13+7-b1751.21
+  Encoding: UTF-8 (UTF-8)
+  Process: 42215@glaroam2-149-245.wireless.gla.ac.uk [172.30.149.245]
+  CPUs: 8 - Mem: 16 GB (871.4 MB) - Swap: 0 (0)
+Jan-11 12:41:42.798 [main] DEBUG nextflow.Session - Work-dir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work [Mac OS X]
+Jan-11 12:41:42.812 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jan-11 12:41:42.818 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-11 12:41:42.829 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-11 12:41:42.837 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jan-11 12:41:42.883 [main] DEBUG nextflow.Session - Session start
+Jan-11 12:41:43.194 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-11 12:41:43.289 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-11 12:41:43.289 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-11 12:41:43.293 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jan-11 12:41:43.296 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jan-11 12:41:43.352 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-11 12:41:43.352 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-11 12:41:43.357 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:HisatMapping` matches process HisatMapping
+Jan-11 12:41:43.357 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-11 12:41:43.357 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-11 12:41:43.358 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: PaireEndTrimming, SingleEndTrimming, HisatMapping, QualityControl
+Jan-11 12:41:43.359 [main] DEBUG nextflow.Session - Igniting dataflow network (6)
+Jan-11 12:41:43.364 [PathVisitor-1] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *_{1,2}.fq; options: [:]
+Jan-11 12:41:43.364 [PathVisitor-2] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *; options: [:]
+Jan-11 12:41:43.364 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > QualityControl
+Jan-11 12:41:43.365 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > PaireEndTrimming
+Jan-11 12:41:43.366 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > HisatMapping
+Jan-11 12:41:43.366 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Jan-11 12:41:43.367 [main] DEBUG nextflow.Session - Session await
+Jan-11 12:41:43.410 [Actor Thread 14] WARN  nextflow.processor.TaskProcessor - Input tuple does not match input set cardinality declared by process `PaireEndTrimming` -- offending value: [gametocyteII, [/Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/gametocyteII_1.fq, /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/gametocyteII_2.fq]]
+Jan-11 12:41:43.488 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.489 [Task submitter] INFO  nextflow.Session - [54/41a3b6] Submitted process > PaireEndTrimming (1)
+Jan-11 12:41:43.492 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.493 [Task submitter] INFO  nextflow.Session - [e7/8705ea] Submitted process > QualityControl (3)
+Jan-11 12:41:43.498 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.500 [Task submitter] INFO  nextflow.Session - [43/39cadc] Submitted process > PaireEndTrimming (4)
+Jan-11 12:41:43.502 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.503 [Task submitter] INFO  nextflow.Session - [c9/0621f2] Submitted process > QualityControl (1)
+Jan-11 12:41:43.509 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.509 [Task submitter] INFO  nextflow.Session - [b2/ded77a] Submitted process > QualityControl (4)
+Jan-11 12:41:43.512 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.513 [Task submitter] INFO  nextflow.Session - [d6/b84725] Submitted process > QualityControl (5)
+Jan-11 12:41:43.515 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.519 [Task submitter] INFO  nextflow.Session - [a1/bbcf06] Submitted process > PaireEndTrimming (2)
+Jan-11 12:41:43.522 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.524 [Task submitter] INFO  nextflow.Session - [9d/dd1bd0] Submitted process > QualityControl (7)
+Jan-11 12:41:43.880 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: QualityControl (3); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/e7/8705ea0494ad65287146441f868269]
+Jan-11 12:41:43.883 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.883 [Task submitter] INFO  nextflow.Session - [f1/b82bfd] Submitted process > PaireEndTrimming (3)
+Jan-11 12:41:43.897 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-11 12:41:43.900 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: QualityControl (4); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/b2/ded77ada3475dc087be2ffcc68be31]
+Jan-11 12:41:43.905 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.906 [Task submitter] INFO  nextflow.Session - [ca/75df42] Submitted process > QualityControl (2)
+Jan-11 12:41:43.909 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: QualityControl (5); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/d6/b8472531d7e94449521e49cd33b3e5]
+Jan-11 12:41:43.911 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.920 [Task submitter] INFO  nextflow.Session - [7a/ba1240] Submitted process > QualityControl (8)
+Jan-11 12:41:43.978 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: QualityControl (1); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/c9/0621f26e92e1258f84f46bd2fb81d2]
+Jan-11 12:41:43.981 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-11 12:41:43.981 [Task submitter] INFO  nextflow.Session - [e3/e46dd7] Submitted process > QualityControl (6)
+Jan-11 12:41:44.037 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: QualityControl (7); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/9d/dd1bd0e9a1245d779bf60d7d03a398]
+Jan-11 12:41:44.209 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 10; name: PaireEndTrimming (2); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/a1/bbcf067b583dfdff38bdeef2c662ba]
+Jan-11 12:41:44.215 [Actor Thread 11] WARN  nextflow.processor.TaskProcessor - Input tuple does not match input set cardinality declared by process `HisatMapping` -- offending value: [/Users/saikouybah/Documents/RNA_Seq_Nexflow/work/a1/bbcf067b583dfdff38bdeef2c662ba/gametocyteV_paired_1.fq, /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/a1/bbcf067b583dfdff38bdeef2c662ba/gametocyteV_unpaired_1.fq, /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/a1/bbcf067b583dfdff38bdeef2c662ba/gametocyteV_paired_2.fq, /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/a1/bbcf067b583dfdff38bdeef2c662ba/gametocyteV_unpaired_2.fq, /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/a1/bbcf067b583dfdff38bdeef2c662ba/gametocyteV_Trimlog.txt]
+Jan-11 12:41:44.237 [Actor Thread 11] ERROR nextflow.processor.TaskProcessor - Error executing process > 'HisatMapping (1)'
+
+Caused by:
+  No such variable: reads -- Check script 'RNA_Seq_Nextflow.nf' at line: 90
+
+Source block:
+  sample_id = reads.getSimpleName()
+  """
+      hisat2 -x $index --max-intronlen $intronLenght -1 ${sample_id}_paired_1.fq -2 ${sample_id}_paired_2.fq | samotools view - bS -  | samtools sort - > ${sample_id}_sorted.bam
+      """
+
+Tip: when you have fixed the problem you can continue the execution adding the option `-resume` to the run command line
+Jan-11 12:41:44.239 [Actor Thread 11] DEBUG nextflow.Session - Session aborted -- Cause: Process `HisatMapping (1)` script contains error(s)
+Jan-11 12:41:44.269 [Actor Thread 11] DEBUG nextflow.Session - The following nodes are still active:
+[process] HisatMapping
+  status=ACTIVE
+  port 0: (queue) OPEN  ; channel: -
+  port 1: (cntrl) -     ; channel: $
+
+Jan-11 12:41:44.273 [main] DEBUG nextflow.Session - Session await > all processes finished
+Jan-11 12:41:44.273 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-11 12:41:44.301 [main] WARN  n.processor.TaskPollingMonitor - Killing running tasks (6)
+Jan-11 12:41:44.318 [main] DEBUG n.executor.local.LocalTaskHandler - Unable to kill PaireEndTrimming (1) -- command: kill -TERM 42246; exit: 1 
+ bash: line 0: kill: (42246) - No such process
+
+Jan-11 12:41:44.333 [main] DEBUG n.executor.local.LocalTaskHandler - Unable to kill PaireEndTrimming (4) -- command: kill -TERM 42251; exit: 1 
+ bash: line 0: kill: (42251) - No such process
+
+Jan-11 12:41:44.347 [main] DEBUG n.executor.local.LocalTaskHandler - Unable to kill QualityControl (2) -- command: kill -TERM 42440; exit: 1 
+ bash: line 0: kill: (42440) - No such process
+
+Jan-11 12:41:44.351 [main] DEBUG n.executor.local.LocalTaskHandler - Unable to kill QualityControl (8) -- command: kill -TERM 42444; exit: 1 
+ bash: line 0: kill: (42444) - No such process
+
+Jan-11 12:41:44.355 [main] DEBUG n.executor.local.LocalTaskHandler - Unable to kill QualityControl (6) -- command: kill -TERM 42475; exit: 1 
+ bash: line 0: kill: (42475) - No such process
+
+Jan-11 12:41:44.357 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=6; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=6; succeedDuration=2.5s; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=8; peakCpus=8; peakMemory=0; ]
+Jan-11 12:41:44.450 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Jan-11 12:41:44.465 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

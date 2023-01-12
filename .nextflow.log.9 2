@@ -1,0 +1,64 @@
+Jan-09 12:52:51.733 [main] DEBUG nextflow.cli.Launcher - $> nextflow run RNA_Seq_Nextflow.nf
+Jan-09 12:52:51.780 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.4
+Jan-09 12:52:51.791 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/saikouybah/.nextflow/plugins; core-plugins: nf-amazon@1.11.2,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.2
+Jan-09 12:52:51.797 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-09 12:52:51.797 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-09 12:52:51.799 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jan-09 12:52:51.805 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-09 12:52:51.836 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Jan-09 12:52:51.846 [main] INFO  nextflow.cli.CmdRun - Launching `RNA_Seq_Nextflow.nf` [sleepy_murdock] DSL2 - revision: c47efa798a
+Jan-09 12:52:51.847 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jan-09 12:52:51.847 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Jan-09 12:52:51.852 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/saikouybah/.nextflow/secrets/store.json
+Jan-09 12:52:51.855 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@6411d3c8] - activable => nextflow.secret.LocalSecretsProvider@6411d3c8
+Jan-09 12:52:51.902 [main] DEBUG nextflow.Session - Session UUID: 34701df1-8466-4049-a8c1-ceb95f0a3dd5
+Jan-09 12:52:51.902 [main] DEBUG nextflow.Session - Run name: sleepy_murdock
+Jan-09 12:52:51.902 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-09 12:52:51.910 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-09 12:52:51.927 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.4 build 5836
+  Created: 09-12-2022 09:58 UTC (09:58 BST)
+  System: Mac OS X 13.1
+  Runtime: Groovy 3.0.13 on OpenJDK 64-Bit Server VM 11.0.13+7-b1751.21
+  Encoding: UTF-8 (UTF-8)
+  Process: 66993@glaroam2-169-90.wireless.gla.ac.uk [172.30.169.90]
+  CPUs: 8 - Mem: 16 GB (77 MB) - Swap: 0 (0)
+Jan-09 12:52:51.934 [main] DEBUG nextflow.Session - Work-dir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work [Mac OS X]
+Jan-09 12:52:51.956 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jan-09 12:52:51.962 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-09 12:52:51.973 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-09 12:52:51.980 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jan-09 12:52:52.017 [main] DEBUG nextflow.Session - Session start
+Jan-09 12:52:52.381 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-09 12:52:52.388 [main] INFO  nextflow.script.BaseScript - reads: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/*_{1,2}.fq
+Jan-09 12:52:52.388 [main] INFO  nextflow.script.BaseScript - reads: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Reference/ref.fa
+Jan-09 12:52:52.481 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-09 12:52:52.481 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-09 12:52:52.485 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jan-09 12:52:52.488 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jan-09 12:52:52.533 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: QualityControl
+Jan-09 12:52:52.533 [main] DEBUG nextflow.Session - Igniting dataflow network (2)
+Jan-09 12:52:52.537 [PathVisitor-1] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *_{1,2}.fq; options: [:]
+Jan-09 12:52:52.537 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > QualityControl
+Jan-09 12:52:52.537 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Jan-09 12:52:52.538 [main] DEBUG nextflow.Session - Session await
+Jan-09 12:52:52.626 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-09 12:52:52.627 [Task submitter] INFO  nextflow.Session - [c7/e32fad] Submitted process > QualityControl (1)
+Jan-09 12:52:52.630 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-09 12:52:52.630 [Task submitter] INFO  nextflow.Session - [b0/0390f7] Submitted process > QualityControl (4)
+Jan-09 12:52:52.633 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-09 12:52:52.633 [Task submitter] INFO  nextflow.Session - [b8/63bad9] Submitted process > QualityControl (2)
+Jan-09 12:52:52.636 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-09 12:52:52.637 [Task submitter] INFO  nextflow.Session - [e2/95ec91] Submitted process > QualityControl (3)
+Jan-09 12:52:55.325 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: QualityControl (1); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/c7/e32fad388f766ad18edf29974f80e8]
+Jan-09 12:52:55.338 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-09 12:52:55.341 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: QualityControl (4); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/b0/0390f788d7a5f3cb0f6285561b22b2]
+Jan-09 12:52:55.344 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: QualityControl (2); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/b8/63bad93770d0b074bbded255f8a8a0]
+Jan-09 12:52:55.347 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: QualityControl (3); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/e2/95ec91439bc406edcf4f887280889d]
+Jan-09 12:52:55.353 [main] DEBUG nextflow.Session - Session await > all processes finished
+Jan-09 12:52:55.429 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-09 12:52:55.431 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'PublishDir' shutdown completed (hard=false)
+Jan-09 12:52:55.439 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=4; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=10.5s; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=4; peakCpus=4; peakMemory=0; ]
+Jan-09 12:52:55.548 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Jan-09 12:52:55.558 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'FileTransfer' shutdown completed (hard=false)
+Jan-09 12:52:55.558 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

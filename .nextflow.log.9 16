@@ -1,0 +1,77 @@
+Jan-11 10:18:01.605 [main] DEBUG nextflow.cli.Launcher - $> nextflow run RNA_Seq_Nextflow.nf
+Jan-11 10:18:01.698 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.4
+Jan-11 10:18:01.712 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/saikouybah/.nextflow/plugins; core-plugins: nf-amazon@1.11.2,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.2
+Jan-11 10:18:01.718 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-11 10:18:01.718 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-11 10:18:01.720 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jan-11 10:18:01.728 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-11 10:18:01.763 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Jan-11 10:18:01.777 [main] INFO  nextflow.cli.CmdRun - Launching `RNA_Seq_Nextflow.nf` [pensive_woese] DSL2 - revision: 299517ecb1
+Jan-11 10:18:01.777 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jan-11 10:18:01.777 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Jan-11 10:18:01.782 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/saikouybah/.nextflow/secrets/store.json
+Jan-11 10:18:01.786 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@7bb35cc6] - activable => nextflow.secret.LocalSecretsProvider@7bb35cc6
+Jan-11 10:18:01.828 [main] DEBUG nextflow.Session - Session UUID: bbc0e7a3-a9a1-429b-9c51-6aa3d1a00df4
+Jan-11 10:18:01.828 [main] DEBUG nextflow.Session - Run name: pensive_woese
+Jan-11 10:18:01.829 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-11 10:18:01.835 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-11 10:18:01.855 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.4 build 5836
+  Created: 09-12-2022 09:58 UTC (09:58 BST)
+  System: Mac OS X 13.1
+  Runtime: Groovy 3.0.13 on OpenJDK 64-Bit Server VM 11.0.13+7-b1751.21
+  Encoding: UTF-8 (UTF-8)
+  Process: 28021@glaroam2-149-245.wireless.gla.ac.uk [172.30.149.245]
+  CPUs: 8 - Mem: 16 GB (882.8 MB) - Swap: 0 (0)
+Jan-11 10:18:01.864 [main] DEBUG nextflow.Session - Work-dir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work [Mac OS X]
+Jan-11 10:18:01.898 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jan-11 10:18:01.905 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-11 10:18:01.916 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-11 10:18:01.923 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jan-11 10:18:01.964 [main] DEBUG nextflow.Session - Session start
+Jan-11 10:18:02.425 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-11 10:18:02.544 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-11 10:18:02.544 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-11 10:18:02.551 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jan-11 10:18:02.554 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jan-11 10:18:02.603 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-11 10:18:02.603 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-11 10:18:02.604 [main] WARN  nextflow.processor.TaskProcessor - Input `set` must define at least two component -- Check process `SingleEndTrimming`
+Jan-11 10:18:02.608 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: PaireEndTrimming, SingleEndTrimming, QualityControl
+Jan-11 10:18:02.608 [main] DEBUG nextflow.Session - Igniting dataflow network (4)
+Jan-11 10:18:02.612 [PathVisitor-1] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *_{1,2}.fq; options: [:]
+Jan-11 10:18:02.612 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > QualityControl
+Jan-11 10:18:02.612 [PathVisitor-2] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *; options: [:]
+Jan-11 10:18:02.613 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > SingleEndTrimming
+Jan-11 10:18:02.613 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Jan-11 10:18:02.614 [main] DEBUG nextflow.Session - Session await
+Jan-11 10:18:02.713 [Actor Thread 5] ERROR nextflow.processor.TaskProcessor - Error executing process > 'SingleEndTrimming (1)'
+
+Caused by:
+  No such variable: adapters -- Check script 'RNA_Seq_Nextflow.nf' at line: 74
+
+Source block:
+  sample_id = reads.getSimpleName()
+  """
+      SingleEndTrimming.sh ${projectDir} ${reads} ${sample_id}_trim.fq ${adapters} ${sample_id}_Trimlog.txt
+      
+      """
+
+Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
+Jan-11 10:18:02.716 [Actor Thread 5] DEBUG nextflow.Session - Session aborted -- Cause: Process `SingleEndTrimming (1)` script contains error(s)
+Jan-11 10:18:02.728 [Actor Thread 5] DEBUG nextflow.Session - The following nodes are still active:
+[process] QualityControl
+  status=ACTIVE
+  port 0: (queue) closed; channel: reads
+  port 1: (cntrl) -     ; channel: $
+
+[process] SingleEndTrimming
+  status=ACTIVE
+  port 0: (queue) closed; channel: -
+  port 1: (cntrl) -     ; channel: $
+
+Jan-11 10:18:02.730 [main] DEBUG nextflow.Session - Session await > all processes finished
+Jan-11 10:18:02.730 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-11 10:18:02.734 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=0; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=0ms; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=0; peakCpus=0; peakMemory=0; ]
+Jan-11 10:18:02.930 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Jan-11 10:18:02.946 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

@@ -1,0 +1,107 @@
+Jan-10 17:57:22.144 [main] DEBUG nextflow.cli.Launcher - $> nextflow run RNA_Seq_Nextflow.nf
+Jan-10 17:57:22.225 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.4
+Jan-10 17:57:22.237 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/saikouybah/.nextflow/plugins; core-plugins: nf-amazon@1.11.2,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.2
+Jan-10 17:57:22.244 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-10 17:57:22.245 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-10 17:57:22.246 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jan-10 17:57:22.254 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-10 17:57:22.287 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Jan-10 17:57:22.299 [main] INFO  nextflow.cli.CmdRun - Launching `RNA_Seq_Nextflow.nf` [gloomy_jepsen] DSL2 - revision: c3d3284498
+Jan-10 17:57:22.299 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jan-10 17:57:22.299 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Jan-10 17:57:22.305 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/saikouybah/.nextflow/secrets/store.json
+Jan-10 17:57:22.309 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@44de94c3] - activable => nextflow.secret.LocalSecretsProvider@44de94c3
+Jan-10 17:57:22.360 [main] DEBUG nextflow.Session - Session UUID: 78ae36c9-a0fd-4d40-b179-ce496a7fa31e
+Jan-10 17:57:22.361 [main] DEBUG nextflow.Session - Run name: gloomy_jepsen
+Jan-10 17:57:22.361 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-10 17:57:22.368 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-10 17:57:22.480 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.4 build 5836
+  Created: 09-12-2022 09:58 UTC (09:58 BST)
+  System: Mac OS X 13.1
+  Runtime: Groovy 3.0.13 on OpenJDK 64-Bit Server VM 11.0.13+7-b1751.21
+  Encoding: UTF-8 (UTF-8)
+  Process: 16541@Saikous-MacBook-Pro.local [127.0.0.1]
+  CPUs: 8 - Mem: 16 GB (879.1 MB) - Swap: 0 (0)
+Jan-10 17:57:22.489 [main] DEBUG nextflow.Session - Work-dir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work [Mac OS X]
+Jan-10 17:57:22.515 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jan-10 17:57:22.521 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-10 17:57:22.531 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-10 17:57:22.536 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jan-10 17:57:22.574 [main] DEBUG nextflow.Session - Session start
+Jan-10 17:57:23.062 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-10 17:57:23.175 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-10 17:57:23.175 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-10 17:57:23.178 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jan-10 17:57:23.181 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jan-10 17:57:23.236 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-10 17:57:23.236 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-10 17:57:23.237 [main] WARN  nextflow.processor.TaskProcessor - Input `set` must define at least two component -- Check process `SingleEndTrimming`
+Jan-10 17:57:23.238 [main] WARN  nextflow.processor.TaskProcessor - Output `set` must define at least two component -- Check process `SingleEndTrimming`
+Jan-10 17:57:23.240 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: PaireEndTrimming, SingleEndTrimming, QualityControl
+Jan-10 17:57:23.240 [main] DEBUG nextflow.Session - Igniting dataflow network (4)
+Jan-10 17:57:23.244 [PathVisitor-1] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *_{1,2}.fq; options: [:]
+Jan-10 17:57:23.244 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > QualityControl
+Jan-10 17:57:23.245 [PathVisitor-2] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /Users/saikouybah/Documents/RNA_Seq_Nexflow/Fastq/; pattern: *; options: [:]
+Jan-10 17:57:23.245 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > SingleEndTrimming
+Jan-10 17:57:23.245 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Jan-10 17:57:23.245 [main] DEBUG nextflow.Session - Session await
+Jan-10 17:57:23.385 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.387 [Task submitter] INFO  nextflow.Session - [27/c732f9] Submitted process > SingleEndTrimming (6)
+Jan-10 17:57:23.391 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.391 [Task submitter] INFO  nextflow.Session - [7d/f62110] Submitted process > QualityControl (2)
+Jan-10 17:57:23.394 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.395 [Task submitter] INFO  nextflow.Session - [09/9d9884] Submitted process > QualityControl (6)
+Jan-10 17:57:23.398 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.398 [Task submitter] INFO  nextflow.Session - [52/fc8969] Submitted process > SingleEndTrimming (5)
+Jan-10 17:57:23.400 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.401 [Task submitter] INFO  nextflow.Session - [7d/11600e] Submitted process > SingleEndTrimming (7)
+Jan-10 17:57:23.402 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.403 [Task submitter] INFO  nextflow.Session - [78/c5d67e] Submitted process > SingleEndTrimming (8)
+Jan-10 17:57:23.410 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.412 [Task submitter] INFO  nextflow.Session - [57/58fdd4] Submitted process > QualityControl (8)
+Jan-10 17:57:23.414 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.416 [Task submitter] INFO  nextflow.Session - [b0/f58fa3] Submitted process > QualityControl (1)
+Jan-10 17:57:23.756 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 12; name: QualityControl (6); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/09/9d9884c7901f156e1734adfc12fbaf]
+Jan-10 17:57:23.795 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-10 17:57:23.795 [Task submitter] INFO  nextflow.Session - [c3/549696] Submitted process > QualityControl (4)
+Jan-10 17:57:23.822 [Task monitor] DEBUG nextflow.processor.TaskProcessor - Process `QualityControl (6)` is unable to find [UnixPath]: `/Users/saikouybah/Documents/RNA_Seq_Nexflow/work/09/9d9884c7901f156e1734adfc12fbaf/gametocyteV_1_QC_report` (pattern: `gametocyteV_1_QC_report`)
+Jan-10 17:57:23.844 [Task monitor] ERROR nextflow.processor.TaskProcessor - Error executing process > 'QualityControl (6)'
+
+Caused by:
+  Missing output file(s) `gametocyteV_1_QC_report` expected by process `QualityControl (6)`
+
+Command executed:
+
+  FastQC.sh  "gametocyteV_1.fq", "gametocyteV_1_QC_report"
+
+Command exit status:
+  0
+
+Command output:
+  (empty)
+
+Command error:
+  Skipping 'gametocyteV_1.fq,' which didn't exist, or couldn't be read
+
+Work dir:
+  /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/09/9d9884c7901f156e1734adfc12fbaf
+
+Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
+Jan-10 17:57:23.846 [Task monitor] DEBUG nextflow.Session - Session aborted -- Cause: Missing output file(s) `gametocyteV_1_QC_report` expected by process `QualityControl (6)`
+Jan-10 17:57:23.878 [main] DEBUG nextflow.Session - Session await > all processes finished
+Jan-10 17:57:23.878 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-10 17:57:23.881 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9; name: SingleEndTrimming (5); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/52/fc896971479cc91ff2d48eb4c9aa7d]
+Jan-10 17:57:23.888 [main] WARN  n.processor.TaskPollingMonitor - Killing running tasks (7)
+Jan-10 17:57:23.900 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-10 17:57:23.905 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 15; name: SingleEndTrimming (8); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/78/c5d67e6a9c093c411cf1552a0ceeb8]
+Jan-10 17:57:23.910 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 16; name: QualityControl (8); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/57/58fdd4c6fc2eabb13f79bdf4c5dd78]
+Jan-10 17:57:23.911 [Task monitor] DEBUG nextflow.processor.TaskProcessor - Process `QualityControl (8)` is unable to find [UnixPath]: `/Users/saikouybah/Documents/RNA_Seq_Nexflow/work/57/58fdd4c6fc2eabb13f79bdf4c5dd78/lateTroph_1_QC_report` (pattern: `lateTroph_1_QC_report`)
+Jan-10 17:57:23.913 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: QualityControl (1); status: COMPLETED; exit: 0; error: -; workDir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work/b0/f58fa322471fa488627f3d554e2ee2]
+Jan-10 17:57:23.913 [Task monitor] DEBUG nextflow.processor.TaskProcessor - Process `QualityControl (1)` is unable to find [UnixPath]: `/Users/saikouybah/Documents/RNA_Seq_Nexflow/work/b0/f58fa322471fa488627f3d554e2ee2/schizont_1_QC_report` (pattern: `schizont_1_QC_report`)
+Jan-10 17:57:23.917 [main] DEBUG n.executor.local.LocalTaskHandler - Unable to kill QualityControl (2) -- command: kill -TERM 16570; exit: 1 
+ bash: line 0: kill: (16570) - No such process
+
+Jan-10 17:57:23.935 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=2; failedCount=3; ignoredCount=0; cachedCount=0; pendingCount=7; submittedCount=1; runningCount=-1; retriesCount=0; abortedCount=4; succeedDuration=787ms; failedDuration=1.1s; cachedDuration=0ms;loadCpus=-1; loadMemory=0; peakRunning=8; peakCpus=8; peakMemory=0; ]
+Jan-10 17:57:24.051 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Jan-10 17:57:24.065 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

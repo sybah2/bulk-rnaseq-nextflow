@@ -1,0 +1,42 @@
+Jan-11 15:01:20.703 [main] DEBUG nextflow.cli.Launcher - $> nextflow run RNA_Seq_Nextflow.nf --isPaired false
+Jan-11 15:01:20.811 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.4
+Jan-11 15:01:20.824 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/saikouybah/.nextflow/plugins; core-plugins: nf-amazon@1.11.2,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.2
+Jan-11 15:01:20.831 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-11 15:01:20.832 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-11 15:01:20.834 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jan-11 15:01:20.841 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-11 15:01:20.855 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/saikouybah/Documents/RNA_Seq_Nexflow/nextflow.config
+Jan-11 15:01:20.855 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/saikouybah/Documents/RNA_Seq_Nexflow/nextflow.config
+Jan-11 15:01:20.869 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jan-11 15:01:21.183 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Jan-11 15:01:21.192 [main] INFO  nextflow.cli.CmdRun - Launching `RNA_Seq_Nextflow.nf` [thirsty_magritte] DSL2 - revision: 5e20565ce6
+Jan-11 15:01:21.192 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jan-11 15:01:21.192 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Jan-11 15:01:21.198 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/saikouybah/.nextflow/secrets/store.json
+Jan-11 15:01:21.200 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@633cc6b5] - activable => nextflow.secret.LocalSecretsProvider@633cc6b5
+Jan-11 15:01:21.234 [main] DEBUG nextflow.Session - Session UUID: ac856e24-5d1a-4415-8637-a6a747ebdf97
+Jan-11 15:01:21.235 [main] DEBUG nextflow.Session - Run name: thirsty_magritte
+Jan-11 15:01:21.235 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-11 15:01:21.241 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-11 15:01:21.258 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.4 build 5836
+  Created: 09-12-2022 09:58 UTC (09:58 BST)
+  System: Mac OS X 13.1
+  Runtime: Groovy 3.0.13 on OpenJDK 64-Bit Server VM 11.0.13+7-b1751.21
+  Encoding: UTF-8 (UTF-8)
+  Process: 52264@glaroam2-149-245.wireless.gla.ac.uk [172.30.149.245]
+  CPUs: 8 - Mem: 16 GB (583.9 MB) - Swap: 0 (0)
+Jan-11 15:01:21.266 [main] DEBUG nextflow.Session - Work-dir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work [Mac OS X]
+Jan-11 15:01:21.277 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jan-11 15:01:21.282 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-11 15:01:21.292 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-11 15:01:21.298 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jan-11 15:01:21.340 [main] DEBUG nextflow.Session - Session start
+Jan-11 15:01:21.439 [main] ERROR nextflow.cli.Launcher - Script compilation error
+- file : /Users/saikouybah/Documents/RNA_Seq_Nexflow/RNA_Seq_Nextflow.nf
+- cause: Unexpected input: '{' @ line 37, column 26.
+   process PaireEndTrimming {
+                            ^
+
+1 error
+
