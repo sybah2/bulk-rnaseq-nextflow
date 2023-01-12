@@ -1,47 +1,42 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-params.reads = "$projectDir/Fastq"
-params.index = "$projectDir/index/pfal3D7"
-params.isPaired = false
-params.isStranded = true
-params.intronLenght = 3636
-params.adapters = "$projectDir/All_adaptors-PE.fa"
-params.results = 'Results'
-
 // Define the channel for single and paired end reads
-read_pairs_ch = Channel.fromFilePairs("${params.reads}/*_{1,2}*")
-singleEndReads = Channel.fromPath("${params.reads}/*")
+if (params.isPaired) {
+    samples_ch = Channel.fromFilePairs("${params.reads}/*_{1,2}*")
+}
+else {
+    samples_ch = Channel.fromPath("${params.reads}/*")
+}
+samples_ch.view()
 
 // FastQC quality control process defination
 process QualityControl{
+    //container = 'biocontainers/fastqc:v0.11.9_cv7'
 
-    tag {sample_id}
-
-    publishDir "${params.results}/QC_reports/", mode: 'copy'
-
+    publishDir "$params.results/QC_reports", mode: 'copy'
 
     input:
-    path(reads)
+    tuple val(sampleName), path(reads)
 
     output:
-    path "${sample_id}_QC_report"
+    path "${sampleName}_QC_report"
 
     script:
-    sample_id = reads.getSimpleName()
+    //sample_id = reads.getSimpleName()
 
     """
-    FastQC1.sh "$reads", "${sample_id}"
+    FastQC1.sh "$reads" "${sampleName}"
     """
 }
 
 
 // Paired end trimming (with Trimmomatic) process defination 
 process PaireEndTrimming {
+    container = 'veupathdb/shortreadaligner'
 
-    tag {sample_id}
-
-    publishDir "${params.results}/Trimmed_reads/${sample_id}", mode: 'copy'
+    //this is not working - not sure why
+    //publishDir "$params.results", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)
@@ -49,6 +44,7 @@ process PaireEndTrimming {
     output:
     tuple val(sample_id), path("${sample_id}_paired_1.fq"), path("${sample_id}_paired_2.fq"), emit: trimmed_fastqs
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
+    
     script:
     
     """ 
@@ -58,8 +54,10 @@ process PaireEndTrimming {
     """
 }
 
+// I haven't modified this process yet
 // Single end trimming (With Trimmomatic) process defination
 process SingleEndTrimming {
+    container = 'veupathdb/shortreadaligner'
 
     tag {sample_id}
     
@@ -76,32 +74,29 @@ process SingleEndTrimming {
     sample_id = reads.getSimpleName()
 
     """
-    touch ${sample_id}_trim1.fq
-    SingleEndTrimming.sh ${projectDir} ${reads} ${sample_id}_trim.fq ${params.adapters} ${sample_id}_Trimlog.txt
+    SingleEndTrimming.sh ${projectDir} ${reads} ${sample_id}_trim.fq ${adapters} ${sample_id}_Trimlog.txt
     
     """
-
 }
 
 process HisatMapping{
-    
     container = 'veupathdb/shortreadaligner'
 
+    tag {sample_id}
 
-    publishDir "${params.results}/Bam/${sample_id}", mode: 'copy'
+    //publishDir "$params.results/${sample_id}", mode='copy'
 
     input:
-    tuple val(sample_id), path(paired1), path(paired2)
-    
+    tuple val(sample_id), path("${sample_id}_paired_1.fq"), path("${sample_id}_paired_2.fq")
 
 
     output:
     path("${sample_id}_sorted.bam")
 
     script:
-    
+
     """
-    hisat2 -x params.index --max-intronlen params.intronLenght 20 ${paired1} -2 ${paired2} 2>hisat2.log  | samtools view - bS -  | samtools sort - > ${sample_id}_sorted.bam
+    hisat2 -x params.index --max-intronlen params.intronLenght -1 "${sample_id}_paired_1.fq" -2 "${sample_id}_paired_2.fq"i 2>hisat2.log  | samtools view - bS -  | samtools sort - > ${sample_id}_sorted.bam
     """
 
 }
@@ -109,23 +104,23 @@ process HisatMapping{
 // work flow difination
 workflow {
    // call the QC step
-    fastqc = QualityControl(singleEndReads)
+    fastqc = QualityControl(samples_ch)
    
    // Trimming based on paired or not
     if (params.isPaired) 
     {
-        trimm = PaireEndTrimming(read_pairs_ch)
+        trimm = PaireEndTrimming(samples_ch)
         trimm.trimmed_fastqs.view()
         //trimm.trimm_log.view()
     }
-    else 
-    {
-        trimm = SingleEndTrimming(singleEndReads)
-        trimm.trimmed_fastqs.view()
-        //trimm.trimm_log.view()
+//    else 
+//    {
+//        trimm = SingleEndTrimming(singleEndReads)
+//        trimm.trimmed_fastqs.view()
+//        //trimm.trimm_log.view()
 
-    }
+//    }
 
     hisat = HisatMapping(trimm.trimmed_fastqs)
-    //hisat.view()
+    hisat.view()
 }
