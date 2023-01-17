@@ -7,7 +7,8 @@ singleEndReads = Channel.fromPath("${params.reads}/*", checkIfExists: true)
 //singleEndReads.view()
 
 process HisatIndex {
-    container = 'veupathdb/shortreadaligner'
+
+    container = 'dceoy/hisat2'
 
     publishDir "${projectDir}/index/", mode: 'copy'    
 
@@ -27,13 +28,12 @@ process HisatIndex {
 
 // FastQC quality control process defination
 process QualityControl {
-    publishDir "${params.results}/QC_reports/", mode: 'copy'
+    //publishDir "${params.results}/", mode: 'copy'
 
     input:
     path(singleEndReads)
 
     output:
-    // tuple file('*.html'), file('*.zip') 
     path("${sample_id}_QC")
 
 
@@ -51,7 +51,7 @@ process PaireEndTrimming {
 
     tag {sample_id}
 
-    publishDir "${params.results}/Trimmed_reads/${sample_id}", mode: 'copy'
+    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)
@@ -62,7 +62,7 @@ process PaireEndTrimming {
     
     script:
     """  
-    PairedEndTrimming.sh ${projectDir} ${reads[0]} ${reads[1]} ${sample_id}_paired_1.fq.gz  ${sample_id}_unpaired_1.fq.gz ${sample_id}_paired_2.fq.gz ${sample_id}_unpaired_2.fq.gz ${params.adapters} ${sample_id}_Trimlog.txt 
+    PairedEndTrimming.sh ${projectDir} ${reads[0]} ${reads[1]} ${sample_id}_paired_1.fq.gz  ${sample_id}_unpaired_1.fq.gz ${sample_id}_paired_2.fq.gz ${sample_id}_unpaired_2.fq.gz ${params.adaptersPE} ${sample_id}_Trimlog.txt 
     """
 }
 
@@ -71,10 +71,11 @@ process SingleEndTrimming {
 
     tag {sample_id}
     
-    publishDir "${params.results}/Trimmed_reads/${sample_id}", mode: 'copy'
+    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
-    tuple path(reads), val(adapters)
+    path(reads)
+    val(adapters)
 
     output:
     tuple val(sample_id), path("${sample_id}_trim.fq.gz"), emit: trimmed_fastqs
@@ -85,19 +86,19 @@ process SingleEndTrimming {
 
     """
     touch ${sample_id}_trim.fq.gz
-    SingleEndTrimming.sh ${projectDir} ${reads} ${sample_id}_trim.fq.gz ${params.adapters} ${sample_id}_Trimlog.txt  
+    SingleEndTrimming.sh ${projectDir} ${reads} ${sample_id}_trim.fq.gz ${params.adaptersSE} ${sample_id}_Trimlog.txt  
     """
 
 }
 
 process HisatMappingPairedEnd{
 
-    publishDir "${params.results}/Bam/${sample_id}", mode: 'copy'
+    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(paired1), path(paired2)
-    //val hisat2_index 
-    //path 'genomeIndex.*.ht2'
+    val index
+    path 'genomeIndex.*.ht2'
 
     output:
     tuple val(sample_id), path("${sample_id}_sorted.bam")
@@ -105,33 +106,34 @@ process HisatMappingPairedEnd{
     script:
     
     """
-    Hisat2PairedMapping.sh ${params.index} ${params.intronLenght} ${paired1} ${paired2} ${sample_id}
+    hisat2 -x ${index} --max-intronlen ${params.intronLenght} -1 ${paired1} -2 ${paired2} 2>hisat2.log | samtools view -bS - | samtools sort - > ${sample_id}_sorted.bam
     """
 
 }
 
 process HisatMappingSingleEnd{
 
-    publishDir "${params.results}/Bam/${sample_id}", mode: 'copy'
+    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(paired1)
-    //val hisat2_index 
-    //path 'genomeIndex.*.ht2'
+    val index 
+    path 'genomeIndex.*.ht2'
 
     output:
     tuple val(sample_id), path("${sample_id}_sorted.bam")
 
     script:
     """
-    Hisat2SingleEndMapping.sh ${params.index} ${params.intronLenght} ${paired1} ${sample_id}  
+    hisat2 -x ${index} --max-intronlen ${params.intronLenght} -U ${paired1}  2>hisat2.log | samtools view -bS - | samtools sort - > ${sample_id}_sorted.bam
+    
     """
 
 }
 
 process SortBams{
 
-    publishDir "${params.results}/Bam/${sample_id}", mode: 'copy'
+    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(bam)
@@ -147,7 +149,7 @@ process SortBams{
 
 process HtseqCountingUnstranded{
     
-    publishDir "${params.results}/Counts/${sample_id}", mode: 'copy'
+    //publishDir "${params.results}/${sample_id}", mode: 'copy'
     input:
     tuple val(sample_id), path(bam)
 
@@ -164,7 +166,7 @@ process HtseqCountingUnstranded{
 
 process HtseqCountingStranded{
     
-    publishDir "${params.results}/Counts/${sample_id}", mode: 'copy'
+    publishDir "${params.results}/${sample_id}", mode: 'copy'
     input:
     tuple val(sample_id), path(bam)
 
@@ -178,12 +180,30 @@ process HtseqCountingStranded{
     """
 }
 
+process SpliceCrossingReads{
 
+    publishDir "${params.results}/${sample_id}", mode: 'copy'
+
+    container = 'saikou' 
+    input:
+    tuple val(sample_id), path(bam)
+
+    output:
+    path("junctions.tab")
+
+    script:
+
+    """
+    perl /usr/local/bin/gsnapSam2Junctions.pl --is_bam --input_file ${bam} --output_file junctions.tab
+    """
+}
 
 // work flow difination
 workflow {
    // call the QC step
     fastqc = QualityControl(singleEndReads)
+
+    index_ch = HisatIndex(params.reference)
    
    
    // Trimming based on paired or not
@@ -191,22 +211,16 @@ workflow {
     {
         trimm = PaireEndTrimming(read_pairs_ch)
 
+        hisat = HisatMappingPairedEnd(trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+
     }
     else 
     {
-        trimm = SingleEndTrimming(singleEndReads)
+        trimm = SingleEndTrimming(singleEndReads,params.adapters)
+
+        hisat = HisatMappingSingleEnd(trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
     }
     
-    index_ch = HisatIndex(params.reference)
-    
-    if (params.isPaired){
-
-    hisat = HisatMappingPairedEnd(trimm.trimmed_fastqs)
-
-    } else{
-
-    hisat = HisatMappingSingleEnd(trimm.trimmed_fastqs)
-    }
     
     sortedByName = SortBams(hisat)
 
@@ -218,4 +232,6 @@ workflow {
     {
         hisatCount = HtseqCountingUnstranded(sortedByName)
     }
+
+    spliceCounts = SpliceCrossingReads(hisat)
 }
