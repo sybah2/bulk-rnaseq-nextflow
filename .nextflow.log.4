@@ -1,0 +1,85 @@
+Jan-24 14:17:06.321 [main] DEBUG nextflow.cli.Launcher - $> nextflow run RNA_Seq_Nextflow.nf --isPaired false --isStranded true
+Jan-24 14:17:06.351 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.4
+Jan-24 14:17:06.365 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/saikouybah/.nextflow/plugins; core-plugins: nf-amazon@1.11.2,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.2
+Jan-24 14:17:06.373 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jan-24 14:17:06.374 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jan-24 14:17:06.376 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jan-24 14:17:06.383 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jan-24 14:17:06.396 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/saikouybah/Documents/RNA_Seq_Nexflow/nextflow.config
+Jan-24 14:17:06.397 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/saikouybah/Documents/RNA_Seq_Nexflow/nextflow.config
+Jan-24 14:17:06.414 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jan-24 14:17:06.755 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Jan-24 14:17:06.767 [main] INFO  nextflow.cli.CmdRun - Launching `RNA_Seq_Nextflow.nf` [modest_ardinghelli] DSL2 - revision: bc3d828a20
+Jan-24 14:17:06.767 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jan-24 14:17:06.768 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Jan-24 14:17:06.774 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/saikouybah/.nextflow/secrets/store.json
+Jan-24 14:17:06.776 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@1e1b061] - activable => nextflow.secret.LocalSecretsProvider@1e1b061
+Jan-24 14:17:06.815 [main] DEBUG nextflow.Session - Session UUID: 99e0b188-a698-4596-aa58-d728fba2ac63
+Jan-24 14:17:06.815 [main] DEBUG nextflow.Session - Run name: modest_ardinghelli
+Jan-24 14:17:06.815 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-24 14:17:06.821 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Jan-24 14:17:07.014 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.4 build 5836
+  Created: 09-12-2022 09:58 UTC (09:58 BST)
+  System: Mac OS X 13.1
+  Runtime: Groovy 3.0.13 on OpenJDK 64-Bit Server VM 11.0.13+7-b1751.21
+  Encoding: UTF-8 (UTF-8)
+  Process: 31120@Saikous-MacBook-Pro.local [127.0.0.1]
+  CPUs: 8 - Mem: 16 GB (313 MB) - Swap: 0 (0)
+Jan-24 14:17:07.026 [main] DEBUG nextflow.Session - Work-dir: /Users/saikouybah/Documents/RNA_Seq_Nexflow/work [Mac OS X]
+Jan-24 14:17:07.043 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jan-24 14:17:07.049 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jan-24 14:17:07.071 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jan-24 14:17:07.078 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jan-24 14:17:07.114 [main] DEBUG nextflow.Session - Session start
+Jan-24 14:17:07.117 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/saikouybah/Documents/RNA_Seq_Nexflow/myExecutionTrace.txt
+Jan-24 14:17:07.592 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-24 14:17:07.654 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-24 14:17:07.654 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-24 14:17:07.658 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jan-24 14:17:07.661 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jan-24 14:17:07.713 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-24 14:17:07.713 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-24 14:17:07.720 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-24 14:17:07.720 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-24 14:17:07.723 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jan-24 14:17:07.724 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jan-24 14:17:07.728 [main] DEBUG nextflow.Session - Session aborted -- Cause: Process `HisatMappingSingleEnd` declares 4 input channels but 3 were specified
+Jan-24 14:17:07.745 [main] ERROR nextflow.cli.Launcher - Process `HisatMappingSingleEnd` declares 4 input channels but 3 were specified
+nextflow.exception.ScriptRuntimeException: Process `HisatMappingSingleEnd` declares 4 input channels but 3 were specified
+	at nextflow.script.ProcessDef.run(ProcessDef.groovy:175)
+	at nextflow.script.BindableDef.invoke_a(BindableDef.groovy:52)
+	at nextflow.script.ComponentDef.invoke_o(ComponentDef.groovy:41)
+	at nextflow.script.WorkflowBinding.invokeMethod(WorkflowBinding.groovy:94)
+	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeOnDelegationObjects(ClosureMetaClass.java:408)
+	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:350)
+	at org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.callCurrent(PogoMetaClassSite.java:61)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:171)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:203)
+	at Script_847f375e$_runScript_closure12$_closure50.doCall(Script_847f375e:293)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:107)
+	at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:323)
+	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:274)
+	at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1035)
+	at groovy.lang.Closure.call(Closure.java:412)
+	at groovy.lang.Closure.call(Closure.java:406)
+	at nextflow.script.WorkflowDef.run0(WorkflowDef.groovy:205)
+	at nextflow.script.WorkflowDef.run(WorkflowDef.groovy:189)
+	at nextflow.script.BindableDef.invoke_a(BindableDef.groovy:52)
+	at nextflow.script.ChainableDef$invoke_a.call(Unknown Source)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:47)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:125)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:139)
+	at nextflow.script.BaseScript.runDsl2(BaseScript.groovy:208)
+	at nextflow.script.BaseScript.run(BaseScript.groovy:217)
+	at nextflow.script.ScriptParser.runScript(ScriptParser.groovy:230)
+	at nextflow.script.ScriptRunner.run(ScriptRunner.groovy:225)
+	at nextflow.script.ScriptRunner.execute(ScriptRunner.groovy:131)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:354)
+	at nextflow.cli.Launcher.run(Launcher.groovy:487)
+	at nextflow.cli.Launcher.main(Launcher.groovy:646)

@@ -26,10 +26,7 @@ process HisatIndex {
     val 'genomeIndex' , emit: genome_index_name
 
     script:
-
-    """
-    hisat2-build ${reference} genomeIndex
-    """  
+        template 'hista2_index.bash' 
 }
 
 // FastQC quality control process defination
@@ -38,8 +35,6 @@ process QualityControl {
     tag {sample_id}
 
     container = 'biocontainers/fastqc:v0.11.9_cv7'
-
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
     input:
     path(reads)
 
@@ -48,12 +43,7 @@ process QualityControl {
 
     script:
     sample_id = reads.getSimpleName()
-
-    """
-    mkdir ${sample_id}_QC
-    fastqc -o ${sample_id}_QC -f fastq -q ${reads} --extract 
-    
-    """
+    template 'fastqc.bash'
 }
 
 process Fastqc_check {
@@ -61,9 +51,6 @@ process Fastqc_check {
     tag {sample_id}
 
     container = 'veupathdb/shortreadaligner'
-    
-
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(fastqc_out)
@@ -73,20 +60,12 @@ process Fastqc_check {
 
     script:
 
-    """
-    perl /usr/local/bin/fastqc_check.pl ${fastqc_out} "quality_check_out"
-    """
+    template 'fastqc_check.bash'
 
 }
-
 // Paired end trimming (with Trimmomatic) process defination 
 process PaireEndTrimming {
-
-    //container = 'veupathdb/shortreadaligner'
-
     tag {sample_id}
-
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     path("quality_check_out")
@@ -99,20 +78,12 @@ process PaireEndTrimming {
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
     
     script:
-    """  
-    mateAEncoding=\$(cat "quality_check_out")
-    java -jar ${projectDir}/trimmomatic-0.39.jar PE -phred64 -trimlog ${sample_id}_Trimlog.txt ${reads[0]} ${reads[1]} ${sample_id}_paired_1.fq.gz  ${sample_id}_unpaired_1.fq.gz ${sample_id}_paired_2.fq.gz ${sample_id}_unpaired_2.fq.gz ILLUMINACLIP:${params.adaptersPE}:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20
-    """
+    template 'trimming_paired.bash'
 }
 
 // Single end trimming (With Trimmomatic) process defination
 process SingleEndTrimming {
-
-    //container = 'veupathdb/shortreadaligner'
-
     tag {sample_id}
-    
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     path("quality_check_out")
@@ -126,21 +97,17 @@ process SingleEndTrimming {
     script:
     sample_id = reads.getSimpleName()
 
-    """
-    mateAEncoding=\$(cat "quality_check_out")
-    java -jar ${projectDir}/trimmomatic-0.39.jar SE -\$mateAEncoding -trimlog ${sample_id}_Trimlog.txt ${reads} ${sample_id}_trim.fq.gz ILLUMINACLIP:${params.adaptersSE}:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20
-    
-    """
+    template 'trimming_single.bash'
 
 }
 
 process HisatMappingPairedEnd{
     container = 'veupathdb/shortreadaligner'
 
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
     tag {sample_id}
 
     input:
+    path("quality_check_out")
     tuple val(sample_id), path(paired1), path(paired2)
     val index
     path 'genomeIndex.*.ht2'
@@ -150,9 +117,7 @@ process HisatMappingPairedEnd{
 
     script:
     
-    """
-    hisat2 -x ${index} --max-intronlen ${params.intronLenght} -1 ${paired1} -2 ${paired2} 2>hisat2.log | samtools view -bS - | samtools sort - > ${sample_id}.bam
-    """
+    template 'hista2Paired.bash'
 
 }
 
@@ -160,9 +125,8 @@ process HisatMappingSingleEnd{
     tag {sample_id}
     container = 'veupathdb/shortreadaligner'
 
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
-
     input:
+    path("quality_check_out")
     tuple val(sample_id), path(paired1)
     val index 
     path 'genomeIndex.*.ht2'
@@ -171,17 +135,13 @@ process HisatMappingSingleEnd{
     tuple val(sample_id), path("${sample_id}.bam")
 
     script:
-    """
-    hisat2 -x ${index} --max-intronlen ${params.intronLenght} -U ${paired1}  2>hisat2.log | samtools view -bS - | samtools sort - > ${sample_id}.bam
-    
-    """
+    template 'hista2Single.bash'
 
 }
 
 process SortBams{
     tag {sample_id}
     container = 'veupathdb/shortreadaligner'
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(bam)
@@ -189,54 +149,32 @@ process SortBams{
     output:
     tuple val(sample_id), path("${sample_id}_sortedByName.bam")
 
-    """
-    samtools sort -n ${bam} -o "${sample_id}_sortedByName.bam"
-    """
+    script:
+    template 'BamSortbyName.bash'
 
 }
-
-process HtseqCountingUnstranded{
-    
+process HtseqCounting{
+    tag {sample_id} 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     container = 'genomicpariscentre/htseq'
-    tag {sample_id}    
-
+      
     input:
     tuple val(sample_id), path(bam)
 
     output:
-    tuple path("genes.htseq-union.unstranded.counts"), path("genes.htseq-union.unstranded.nonunique.counts")
+    path("*.counts")
     
     script:
-
-    """
-    UnstrandedCounting.sh ${bam} ${params.annotation} "genes.htseq-union.unstranded.counts" "genes.htseq-union.unstranded.nonunique.counts"
-
-    """
+    if (params.isStranded) {
+        template 'htseqCounStranded.bash'
+    } else {
+        template 'htseqCounUnStranded.bash'
+    }
+    
 }
 
-process HtseqCountingStranded{
-    
-    container = 'genomicpariscentre/htseq'
-    tag {sample_id}
-    
-    publishDir "${params.results}/${sample_id}", mode: 'copy'
-    input:
-    tuple val(sample_id), path(bam)
-
-    output:
-    tuple path("genes.htseq-union.firststrand.counts"), path("genes.htseq-union.secondstrand.counts"), path("genes.htseq-union.firststrand.nonunique.counts"), path("genes.htseq-union.secondstrand.nonunique.counts")
-    
-    script:
-
-    """
-    StrandedCounting.sh ${bam} ${params.annotation} "genes.htseq-union.firststrand.counts" "genes.htseq-union.secondstrand.counts" "genes.htseq-union.firststrand.nonunique.counts" "genes.htseq-union.secondstrand.nonunique.counts"
-    """
-}
-
-process SpliceCrossingReads{
-    
+process SpliceCrossingReads{   
     tag {sample_id}
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
@@ -249,13 +187,10 @@ process SpliceCrossingReads{
     path("junctions.tab")
 
     script:
-
-    """
-    perl /usr/local/bin/gsnapSam2Junctions.pl --is_bam --input_file ${bam} --output_file junctions.tab
-    """
+    template 'spliceCorssReads.bash'
 }
 
-process BedFileStatsStrandedUnpaired {
+process BedBamStats{
     tag {sample_id}
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
@@ -270,132 +205,43 @@ process BedFileStatsStrandedUnpaired {
     
     script:
 
-    """
-    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 1 --isPairedEnd 0 --bamFile ${bam}
-
-    """
-}
-process BedFileStatsStrandedPaired {
-    tag {sample_id}
-
-    publishDir "${params.results}/${sample_id}", mode: 'copy'
-
-    container = 'saikou'
-
-    input:
-    tuple val(sample_id), path(bam)
-
-    output:
-    tuple path("*.bed"), path("mappingStats.txt")
+    if (params.isPaired && params.isStranded){
+        template 'BedFileStatsStrandedPaired.bash'
+    } else if  (!params.isPaired && params.isStranded) {
+        template 'BedFileStatsStrandedUnpaired.bash'
+    } else if  (params.isPaired && !params.isStranded) {
+        template 'BedFileStatsUnstrandedPaired.bash'
+    } else if  (!params.isPaired && !params.isStranded) {
+        template 'BedFileStatsUnstrandedUnpaired.bash'
+    }
     
-    script:
-
-    """
-    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 1 --isPairedEnd 1 --bamFile ${bam}
-
-    """
-}
-
-process BedFileStatsUnstrandedUnpaired {
-    tag {sample_id}
-
-    publishDir "${params.results}/${sample_id}", mode: 'copy'
-
-    container = 'saikou'
-
-    input:
-    tuple val(sample_id), path(bam)
-
-    output:
-    tuple path("*.bed"), path("mappingStats.txt")
-    
-    script:
-
-    """
-    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 0 --isPairedEnd 0 --bamFile ${bam}
-
-    """
-}
-process BedFileStatsUnstrandedPaired {
-    tag {sample_id}
-
-    publishDir "${params.results}/${sample_id}", mode: 'copy'
-
-    container = 'saikou'
-
-    input:
-    tuple val(sample_id), path(bam)
-
-    output:
-    tuple path("*.bed"), path("mappingStats.txt")
-    
-    script:
-
-    """
-    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 0 --isPairedEnd 1 --bamFile ${bam}
-
-    """
 }
 // work flow difination
 workflow {
    // call the QC step
     fastqc = QualityControl(singleEndReads)
-    //fastqc.view()
+    // fastqc check
     chech_fastq = Fastqc_check(fastqc)
-    //chech_fastq.view()
     
     index_ch = HisatIndex(params.reference)
-   
-   
+     
    // Trimming based on paired or not
     if (params.isPaired) 
     {
         trimm = PaireEndTrimming(chech_fastq,read_pairs_ch)
-
-        hisat = HisatMappingPairedEnd(trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+        hisat = HisatMappingPairedEnd(chech_fastq,trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
         //hisat.view()
-
     }
     else 
     {
         trimm = SingleEndTrimming(chech_fastq,singleEndReads)
-
-        hisat = HisatMappingSingleEnd(trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+        hisat = HisatMappingSingleEnd(chech_fastq,trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
         //hisat.view()
     }
-    
-  
+ 
     sortedByName = SortBams(hisat)
-
-    if (params.isStranded) {
-
-        hisatCount = HtseqCountingStranded(sortedByName)
-
-    } else
-    {
-        hisatCount = HtseqCountingUnstranded(sortedByName)
-    }
-
+    hisatCount = HtseqCounting(sortedByName)
+    beds_stats = BedBamStats(hisat)
     spliceCounts = SpliceCrossingReads(hisat)
-
-
-    if (params.isPaired && params.isStranded){
-
-        befFileStats = BedFileStatsStrandedPaired(hisat)
-
-    } else if  (!params.isPaired && params.isStranded) {
-
-        befFileStats = BedFileStatsStrandedUnpaired(hisat)
-
-    } else if  (params.isPaired && !params.isStranded) {
-
-        befFileStats = BedFileStatsUnstrandedPaired(hisat)
-
-    } else if  (!params.isPaired && !params.isStranded) {
-
-        befFileStats = BedFileStatsUnstrandedUnpaired(hisat)
-
-    }
-
 
 }
