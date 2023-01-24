@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-// Define the channel for single and paired end reads
+// Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
 if (params.isPaired){
 read_pairs_ch = Channel.fromFilePairs("${params.reads}/*_{1,2}*", checkIfExists: true)
 singleEndReads = Channel.fromPath("${params.reads}/*", checkIfExists: true)
@@ -197,10 +197,11 @@ process SortBams{
 
 process HtseqCountingUnstranded{
     
+    publishDir "${params.results}/${sample_id}", mode: 'copy'
+
     container = 'genomicpariscentre/htseq'
-    tag {sample_id}
-    
-    //publishDir "${params.results}/${sample_id}", mode: 'copy'
+    tag {sample_id}    
+
     input:
     tuple val(sample_id), path(bam)
 
@@ -254,9 +255,9 @@ process SpliceCrossingReads{
     """
 }
 
-process BedFileStatsStranded {
+process BedFileStatsStrandedUnpaired {
     tag {sample_id}
-    
+
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
     container = 'saikou'
@@ -274,7 +275,67 @@ process BedFileStatsStranded {
 
     """
 }
+process BedFileStatsStrandedPaired {
+    tag {sample_id}
 
+    publishDir "${params.results}/${sample_id}", mode: 'copy'
+
+    container = 'saikou'
+
+    input:
+    tuple val(sample_id), path(bam)
+
+    output:
+    tuple path("*.bed"), path("mappingStats.txt")
+    
+    script:
+
+    """
+    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 1 --isPairedEnd 1 --bamFile ${bam}
+
+    """
+}
+
+process BedFileStatsUnstrandedUnpaired {
+    tag {sample_id}
+
+    publishDir "${params.results}/${sample_id}", mode: 'copy'
+
+    container = 'saikou'
+
+    input:
+    tuple val(sample_id), path(bam)
+
+    output:
+    tuple path("*.bed"), path("mappingStats.txt")
+    
+    script:
+
+    """
+    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 0 --isPairedEnd 0 --bamFile ${bam}
+
+    """
+}
+process BedFileStatsUnstrandedPaired {
+    tag {sample_id}
+
+    publishDir "${params.results}/${sample_id}", mode: 'copy'
+
+    container = 'saikou'
+
+    input:
+    tuple val(sample_id), path(bam)
+
+    output:
+    tuple path("*.bed"), path("mappingStats.txt")
+    
+    script:
+
+    """
+    perl /usr/local/bin/gsnapSplitBam.pl --mainResultDir . --strandSpecific 0 --isPairedEnd 1 --bamFile ${bam}
+
+    """
+}
 // work flow difination
 workflow {
    // call the QC step
@@ -292,7 +353,7 @@ workflow {
         trimm = PaireEndTrimming(chech_fastq,read_pairs_ch)
 
         hisat = HisatMappingPairedEnd(trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
-        hisat.view()
+        //hisat.view()
 
     }
     else 
@@ -300,7 +361,7 @@ workflow {
         trimm = SingleEndTrimming(chech_fastq,singleEndReads)
 
         hisat = HisatMappingSingleEnd(trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
-        hisat.view()
+        //hisat.view()
     }
     
   
@@ -317,7 +378,24 @@ workflow {
 
     spliceCounts = SpliceCrossingReads(hisat)
 
-    befFileStats = BedFileStatsStranded(hisat)
+
+    if (params.isPaired && params.isStranded){
+
+        befFileStats = BedFileStatsStrandedPaired(hisat)
+
+    } else if  (!params.isPaired && params.isStranded) {
+
+        befFileStats = BedFileStatsStrandedUnpaired(hisat)
+
+    } else if  (params.isPaired && !params.isStranded) {
+
+        befFileStats = BedFileStatsUnstrandedPaired(hisat)
+
+    } else if  (!params.isPaired && !params.isStranded) {
+
+        befFileStats = BedFileStatsUnstrandedUnpaired(hisat)
+
+    }
 
 
 }
