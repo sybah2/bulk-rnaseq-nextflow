@@ -2,12 +2,13 @@
 nextflow.enable.dsl=2
 
 // Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
+singleEndReads = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
+
 if (params.isPaired){
-read_pairs_ch = Channel.fromFilePairs("${params.reads}/*_{1,2}*", checkIfExists: true)
-singleEndReads = Channel.fromPath("${params.reads}/*", checkIfExists: true)
-//singleEndReads.view()
+    reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
 } else {
-    singleEndReads = Channel.fromPath("${params.reads}/*", checkIfExists: true)
+    reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz'])
+
 }
 
 process HisatIndex {
@@ -63,15 +64,16 @@ process Fastqc_check {
     template 'fastqc_check.bash'
 
 }
-// Paired end trimming (with Trimmomatic) process defination 
+ 
 process PaireEndTrimming {
     tag {sample_id}
+
+    container = 'saikou'
 
     input:
     path("quality_check_out")
     tuple val(sample_id), path(reads)
-    
-    
+
 
     output:
     tuple val(sample_id), path("${sample_id}_paired_1.fq.gz"), path("${sample_id}_paired_2.fq.gz"), emit: trimmed_fastqs
@@ -81,9 +83,10 @@ process PaireEndTrimming {
     template 'trimming_paired.bash'
 }
 
-// Single end trimming (With Trimmomatic) process defination
 process SingleEndTrimming {
     tag {sample_id}
+
+    container = 'saikou'
 
     input:
     path("quality_check_out")
@@ -218,25 +221,21 @@ process BedBamStats{
 }
 // work flow difination
 workflow {
-   // call the QC step
     fastqc = QualityControl(singleEndReads)
-    // fastqc check
     chech_fastq = Fastqc_check(fastqc)
     
     index_ch = HisatIndex(params.reference)
-     
-   // Trimming based on paired or not
+    
     if (params.isPaired) 
     {
-        trimm = PaireEndTrimming(chech_fastq,read_pairs_ch)
+        trimm = PaireEndTrimming(chech_fastq,reads_ch)
         hisat = HisatMappingPairedEnd(chech_fastq,trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
-        //hisat.view()
     }
     else 
     {
-        trimm = SingleEndTrimming(chech_fastq,singleEndReads)
+        trimm = SingleEndTrimming(chech_fastq,reads_ch)
         hisat = HisatMappingSingleEnd(chech_fastq,trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
-        //hisat.view()
+    
     }
  
     sortedByName = SortBams(hisat)
