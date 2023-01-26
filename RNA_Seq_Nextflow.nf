@@ -1,9 +1,13 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-// Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
-singleEndReads = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
+// The processes defined below using template bash files located in the templates folder in workflow directory. 
 
+// Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
+// read_qc used just for the QC step
+reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
+
+// read_ch for trimming and mapping generated based on weather the sequencing is single or paired end.
 if (params.isPaired){
     reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
 } else {
@@ -11,6 +15,7 @@ if (params.isPaired){
 
 }
 
+// Hist indexing process. 
 process HisatIndex {
 
     tag 'Hisat2 indexing'
@@ -30,7 +35,7 @@ process HisatIndex {
         template 'hista2_index.bash' 
 }
 
-// FastQC quality control process defination
+// FastQC quality control process
 process QualityControl {
 
     tag {sample_id}
@@ -47,6 +52,7 @@ process QualityControl {
     template 'fastqc.bash'
 }
 
+// Fastqc_check process to get the phred encoding
 process Fastqc_check {
 
     tag {sample_id}
@@ -65,6 +71,7 @@ process Fastqc_check {
 
 }
  
+ // Paired end trimming process
 process PaireEndTrimming {
     tag {sample_id}
 
@@ -82,7 +89,7 @@ process PaireEndTrimming {
     script:
     template 'trimming_paired.bash'
 }
-
+// Single end process
 process SingleEndTrimming {
     tag {sample_id}
 
@@ -103,7 +110,7 @@ process SingleEndTrimming {
     template 'trimming_single.bash'
 
 }
-
+// Hisat mapping process for paired end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process HisatMappingPairedEnd{
     container = 'veupathdb/shortreadaligner'
 
@@ -119,11 +126,15 @@ process HisatMappingPairedEnd{
     tuple val(sample_id), path("${sample_id}.bam")
 
     script:
-    
-    template 'hista2Paired.bash'
+    if (params.intronLenght < 20) {
+        template 'hista2PairedNoSplicing.bash'
+    } else if (params.intronLenght >= 20) {
+        template 'hista2Paired.bash'
+    }
 
 }
 
+// Hisat mapping process for single end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process HisatMappingSingleEnd{
     tag {sample_id}
     container = 'veupathdb/shortreadaligner'
@@ -138,10 +149,16 @@ process HisatMappingSingleEnd{
     tuple val(sample_id), path("${sample_id}.bam")
 
     script:
-    template 'hista2Single.bash'
+    if (params.intronLenght < 20) {
+        template 'hista2SingleNoSplicing.bash'
+    } else if (params.intronLenght >= 20) {
+        template 'hista2Single.bash'
+    }
+    
 
 }
 
+// Process to sort bam file by names
 process SortBams{
     tag {sample_id}
     container = 'veupathdb/shortreadaligner'
@@ -156,6 +173,8 @@ process SortBams{
     template 'BamSortbyName.bash'
 
 }
+
+// HTSeq counting process, takes into account weather the sequencing is stranded or not. 
 process HtseqCounting{
     tag {sample_id} 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
@@ -176,7 +195,7 @@ process HtseqCounting{
     }
     
 }
-
+// Process to generate splice juctions
 process SpliceCrossingReads{   
     tag {sample_id}
 
@@ -193,6 +212,7 @@ process SpliceCrossingReads{
     template 'spliceCorssReads.bash'
 }
 
+// Generate bam statistic and bed files from the bam files.
 process BedBamStats{
     tag {sample_id}
 
@@ -221,7 +241,7 @@ process BedBamStats{
 }
 // work flow difination
 workflow {
-    fastqc = QualityControl(singleEndReads)
+    fastqc = QualityControl(reads_qc)
     chech_fastq = Fastqc_check(fastqc)
     
     index_ch = HisatIndex(params.reference)
