@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-mkdir ${sample_id}_QC
-fastqc ${params.fastqcExtension}  -o "${sample_id}_QC" --extract 
+mkdir "${sample_id}_fastqc_out"
+fastqc -o "${sample_id}_fastqc_out" ${reads} --extract

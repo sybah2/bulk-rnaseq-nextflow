@@ -36,21 +36,21 @@ process HisatIndex {
 }
 
 // FastQC quality control process
+
 process QualityControl {
-
-    tag {sample_id}
-
+   //add input channel
     container = 'biocontainers/fastqc:v0.11.9_cv7'
     input:
-    path(reads)
+    path reads
 
     output:
-    tuple val(sample_id), path("${sample_id}_QC")
+    tuple val(sample_id), path("${sample_id}_fastqc_out")
 
     script:
     sample_id = reads.getSimpleName()
     template 'fastqc.bash'
 }
+
 
 // Fastqc_check process to get the phred encoding
 process Fastqc_check {
@@ -244,7 +244,7 @@ process BedBamStats{
 workflow {
     fastqc = QualityControl(reads_qc)
     chech_fastq = Fastqc_check(fastqc)
-    
+ /*   
     index_ch = HisatIndex(params.reference)
     
     if (params.isPaired) 
@@ -263,5 +263,5 @@ workflow {
     hisatCount = HtseqCounting(sortedByName)
     beds_stats = BedBamStats(hisat)
     spliceCounts = SpliceCrossingReads(hisat)
-
+*/
 }
