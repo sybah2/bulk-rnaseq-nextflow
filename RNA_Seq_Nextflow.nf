@@ -197,11 +197,12 @@ process HtseqCounting{
 }
 // Process to generate splice juctions
 process SpliceCrossingReads{   
+
+    container = 'saikou' 
     tag {sample_id}
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
-    container = 'saikou' 
     input:
     tuple val(sample_id), path(bam)
 
