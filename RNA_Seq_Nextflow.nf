@@ -82,7 +82,7 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-    //container = 'saikou'
+    container = 'saikou'
 
     input:
     path("quality_check_out")
@@ -99,7 +99,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-    //container = 'saikou'
+    container = 'saikou'
 
     input:
     path("quality_check_out")
