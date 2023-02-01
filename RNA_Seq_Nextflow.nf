@@ -1,13 +1,25 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-// The processes defined below using template bash files located in the templates folder in workflow directory. 
+
+// Define parameters to be used for the bam statistic and bed file generation.
+if (params.isPaired) {
+    isPairedEnd = 1
+} else {
+    isPairedEnd = 0
+}
+
+if (params.isStranded) {
+    strandSpecific = 1
+}else {
+    strandSpecific = 0
+}
 
 // Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
-// read_qc used just for the QC step
+// reads_qc used just for the QC step
 reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
 
-// read_ch for trimming and mapping generated based on weather the sequencing is single or paired end.
+// reads_ch for trimming and mapping generated based on weather the sequencing is single or paired end.
 if (params.isPaired){
     reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
 } else {
@@ -16,9 +28,7 @@ if (params.isPaired){
 }
 
 // Hist indexing process. 
-process HisatIndex {
-
-    tag 'Hisat2 indexing'
+process hisatIndex {
 
     container = 'veupathdb/shortreadaligner'
 
@@ -35,11 +45,11 @@ process HisatIndex {
         template 'hista2_index.bash' 
 }
 
-// FastQC quality control process
+// fastQC quality control process
 
-process QualityControl {
-   //add input channel
+process qualityControl {
     container = 'biocontainers/fastqc:v0.11.9_cv7'
+    
     input:
     path reads
 
@@ -53,9 +63,7 @@ process QualityControl {
 
 
 // Fastqc_check process to get the phred encoding
-process Fastqc_check {
-
-    tag {sample_id}
+process fastqcCheck {
 
     container = 'veupathdb/shortreadaligner'
 
@@ -72,10 +80,9 @@ process Fastqc_check {
 }
  
  // Paired end trimming process
-process PaireEndTrimming {
-    tag {sample_id}
+process paireEndTrimming {
 
-    container = 'saikou'
+    //container = 'saikou'
 
     input:
     path("quality_check_out")
@@ -90,10 +97,9 @@ process PaireEndTrimming {
     template 'trimming_paired.bash'
 }
 // Single end process
-process SingleEndTrimming {
-    tag {sample_id}
+process singleEndTrimming {
 
-    container = 'saikou'
+    //container = 'saikou'
 
     input:
     path("quality_check_out")
@@ -111,10 +117,8 @@ process SingleEndTrimming {
 
 }
 // Hisat mapping process for paired end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
-process HisatMappingPairedEnd{
+process hisatMappingPairedEnd{
     container = 'veupathdb/shortreadaligner'
-
-    tag {sample_id}
 
     input:
     path("quality_check_out")
@@ -135,8 +139,7 @@ process HisatMappingPairedEnd{
 }
 
 // Hisat mapping process for single end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
-process HisatMappingSingleEnd{
-    tag {sample_id}
+process hisatMappingSingleEnd{
     container = 'veupathdb/shortreadaligner'
 
     input:
@@ -155,12 +158,10 @@ process HisatMappingSingleEnd{
         template 'hista2Single.bash'
     }
     
-
 }
 
 // Process to sort bam file by names
-process SortBams{
-    tag {sample_id}
+process sortBams{
     container = 'veupathdb/shortreadaligner'
 
     input:
@@ -175,14 +176,15 @@ process SortBams{
 }
 
 // HTSeq counting process, takes into account weather the sequencing is stranded or not. 
-process HtseqCounting{
-    tag {sample_id} 
+process htseqCounting{
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
-    container = 'genomicpariscentre/htseq'
+    //container = 'genomicpariscentre/htseq'
+    container = 'biocontainers/htseq:v0.11.2-1-deb-py3_cv1'
       
     input:
     tuple val(sample_id), path(bam)
+    path(annotation)
 
     output:
     path("*.counts")
@@ -196,10 +198,9 @@ process HtseqCounting{
     
 }
 // Process to generate splice juctions
-process SpliceCrossingReads{   
+process spliceCrossingReads{   
 
     container = 'saikou' 
-    tag {sample_id}
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -210,16 +211,14 @@ process SpliceCrossingReads{
     path("junctions.tab")
 
     script:
-    template 'spliceCorssReads.bash'
+    template 'spliceCrossReads.bash'
 }
 
 // Generate bam statistic and bed files from the bam files.
-process BedBamStats{
-    tag {sample_id}
+process bedBamStats{
+    container = 'saikou'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
-
-    container = 'saikou'
 
     input:
     tuple val(sample_id), path(bam)
@@ -228,40 +227,30 @@ process BedBamStats{
     tuple path("*.bed"), path("mappingStats.txt")
     
     script:
-
-    if (params.isPaired && params.isStranded){
-        template 'BedFileStatsStrandedPaired.bash'
-    } else if  (!params.isPaired && params.isStranded) {
-        template 'BedFileStatsStrandedUnpaired.bash'
-    } else if  (params.isPaired && !params.isStranded) {
-        template 'BedFileStatsUnstrandedPaired.bash'
-    } else if  (!params.isPaired && !params.isStranded) {
-        template 'BedFileStatsUnstrandedUnpaired.bash'
-    }
-    
+        template 'BedFileStats.bash'
 }
 // work flow difination
 workflow {
-    fastqc = QualityControl(reads_qc)
-    chech_fastq = Fastqc_check(fastqc)
- /*   
-    index_ch = HisatIndex(params.reference)
-    
+    fastqc = qualityControl(reads_qc)
+    chech_fastq = fastqcCheck(fastqc)
+  
+    index_ch = hisatIndex(params.reference)
+  
     if (params.isPaired) 
     {
-        trimm = PaireEndTrimming(chech_fastq,reads_ch)
-        hisat = HisatMappingPairedEnd(chech_fastq,trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+        trim = paireEndTrimming(chech_fastq,reads_ch)
+        hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
     }
     else 
     {
-        trimm = SingleEndTrimming(chech_fastq,reads_ch)
-        hisat = HisatMappingSingleEnd(chech_fastq,trimm.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+        trim = singleEndTrimming(chech_fastq,reads_ch)
+        hisat = hisatMappingSingleEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
     
     }
- 
-    sortedByName = SortBams(hisat)
-    hisatCount = HtseqCounting(sortedByName)
-    beds_stats = BedBamStats(hisat)
-    spliceCounts = SpliceCrossingReads(hisat)
-*/
+
+    sortedByName = sortBams(hisat)
+    hisatCount = htseqCounting(sortedByName, "${params.annotation}")
+    beds_stats = bedBamStats(hisat)
+    spliceCounts = spliceCrossingReads(hisat)
+
 }
