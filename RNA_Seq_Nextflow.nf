@@ -48,8 +48,6 @@ process hisatIndex {
 
     container = 'veupathdb/shortreadaligner'
 
-    publishDir "${projectDir}/index/", mode: 'copy'    
-
     input:
     path(reference)
 
@@ -58,7 +56,15 @@ process hisatIndex {
     val 'genomeIndex' , emit: genome_index_name
 
     script:
-        template 'hista2_index.bash' 
+        if (params.createIndex) {
+            template 'hista2_index.bash' 
+        } else {
+            template 'hisat2_no_index.bash'
+        }
+    stub:
+    """
+    touch genomeIndex.1.ht2
+    """
 }
 
 // fastQC quality control process
@@ -251,7 +257,7 @@ workflow {
     chech_fastq = fastqcCheck(fastqc)
   
     index_ch = hisatIndex(params.reference)
-  
+ 
     if (params.isPaired) 
     {
         trim = paireEndTrimming(chech_fastq,reads_ch)
@@ -268,5 +274,4 @@ workflow {
     hisatCount = htseqCounting(sortedByName, "${params.annotation}")
     beds_stats = bedBamStats(hisat)
     spliceCounts = spliceCrossingReads(hisat)
-
 }
