@@ -15,6 +15,22 @@ if (params.isStranded) {
     strandSpecific = 0
 }
 
+
+ if(!params.reads) {
+    throw new Exception("Missing parameter params.reads")
+  }
+if(!params.reference) {
+    throw new Exception("Missing parameter params.reference")
+  }
+
+if(!params.annotation) {
+    throw new Exception("Missing parameter params.annotation")
+  }
+
+if(!params.annotation) {
+    throw new Exception("Missing parameter params.intronLenght")
+  }
+
 // Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
 // reads_qc used just for the QC step
 reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
@@ -82,7 +98,7 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-    container = 'saikou'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     path("quality_check_out")
@@ -99,7 +115,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-    container = 'saikou'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     path("quality_check_out")
@@ -200,7 +216,7 @@ process htseqCounting{
 // Process to generate splice juctions
 process spliceCrossingReads{   
 
-    container = 'saikou' 
+    container = 'veupathdb/shortreadaligner' 
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -216,7 +232,7 @@ process spliceCrossingReads{
 
 // Generate bam statistic and bed files from the bam files.
 process bedBamStats{
-    container = 'saikou'
+    container = 'veupathdb/shortreadaligner'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
