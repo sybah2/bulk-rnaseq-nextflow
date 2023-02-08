@@ -1,48 +1,6 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-
-// Define parameters to be used for the bam statistic and bed file generation.
-if (params.isPaired) {
-    isPairedEnd = 1
-} else {
-    isPairedEnd = 0
-}
-
-if (params.isStranded) {
-    strandSpecific = 1
-}else {
-    strandSpecific = 0
-}
-
-
- if(!params.reads) {
-    throw new Exception("Missing parameter params.reads")
-  }
-if(!params.reference) {
-    throw new Exception("Missing parameter params.reference")
-  }
-
-if(!params.annotation) {
-    throw new Exception("Missing parameter params.annotation")
-  }
-
-if(!params.annotation) {
-    throw new Exception("Missing parameter params.intronLenght")
-  }
-
-// Define the channel for single and paired end reads, the second channel for the paired is just for the QC step
-// reads_qc used just for the QC step
-reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
-
-// reads_ch for trimming and mapping generated based on weather the sequencing is single or paired end.
-if (params.isPaired){
-    reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
-} else {
-    reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz'])
-
-}
-
 // Hist indexing process. 
 process hisatIndex {
 
@@ -252,26 +210,32 @@ process bedBamStats{
         template 'BedFileStats.bash'
 }
 // work flow difination
-workflow {
-    fastqc = qualityControl(reads_qc)
-    chech_fastq = fastqcCheck(fastqc)
+workflow rna_seq {
+
+    take:
+        reads_qc
+        reads_ch
+
+    main: 
+        fastqc = qualityControl(reads_qc)
+        chech_fastq = fastqcCheck(fastqc)
   
-    index_ch = hisatIndex(params.reference)
+        index_ch = hisatIndex(params.reference)
  
-    if (params.isPaired) 
-    {
-        trim = paireEndTrimming(chech_fastq,reads_ch)
-        hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
-    }
-    else 
-    {
-        trim = singleEndTrimming(chech_fastq,reads_ch)
-        hisat = hisatMappingSingleEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+        if (params.isPaired) 
+        {
+            trim = paireEndTrimming(chech_fastq,reads_ch)
+            hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+        }
+        else 
+        {
+            trim = singleEndTrimming(chech_fastq,reads_ch)
+            hisat = hisatMappingSingleEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
     
     }
 
-    sortedByName = sortBams(hisat)
-    hisatCount = htseqCounting(sortedByName, "${params.annotation}")
-    beds_stats = bedBamStats(hisat)
-    spliceCounts = spliceCrossingReads(hisat)
+        sortedByName = sortBams(hisat)
+        hisatCount = htseqCounting(sortedByName, "${params.annotation}")
+        beds_stats = bedBamStats(hisat)
+        spliceCounts = spliceCrossingReads(hisat)
 }
