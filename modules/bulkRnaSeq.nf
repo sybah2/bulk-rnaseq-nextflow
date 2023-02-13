@@ -1,7 +1,20 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-// Hist indexing process. 
+
+if (params.isPaired) {
+    isPairedEnd = 1
+} else {
+    isPairedEnd = 0
+}
+
+if (params.isStranded) {
+    strandSpecific = 1
+}else {
+    strandSpecific = 0
+}
+
+// Hisat indexing process. 
 process hisatIndex {
 
     container = 'veupathdb/shortreadaligner'
@@ -15,9 +28,9 @@ process hisatIndex {
 
     script:
         if (params.createIndex) {
-            template 'hista2_index.bash' 
+            template 'hisat2Index.bash' 
         } else {
-            template 'hisat2_no_index.bash'
+            template 'hisat2NoIndex.bash'
         }
     stub:
     """
@@ -45,7 +58,7 @@ process qualityControl {
 // Fastqc_check process to get the phred encoding
 process fastqcCheck {
 
-    container = 'veupathdb/shortreadaligner'
+    container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
     tuple val(sample_id), path(fastqc_out)
@@ -62,10 +75,10 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-    container = 'veupathdb/shortreadaligner'
+   // container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
-    path("quality_check_out")
+    path(quality_check_out)
     tuple val(sample_id), path(reads)
 
 
@@ -74,15 +87,15 @@ process paireEndTrimming {
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
     
     script:
-    template 'trimming_paired.bash'
+    template 'trimmingPaired.bash'
 }
 // Single end process
 process singleEndTrimming {
 
-    container = 'veupathdb/shortreadaligner'
+    //container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
-    path("quality_check_out")
+    path(quality_check_out)
     path(reads)
     
 
@@ -93,15 +106,15 @@ process singleEndTrimming {
     script:
     sample_id = reads.getSimpleName()
 
-    template 'trimming_single.bash'
+    template 'trimmingSingle.bash'
 
 }
 // Hisat mapping process for paired end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process hisatMappingPairedEnd{
-    container = 'veupathdb/shortreadaligner'
+    container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
-    path("quality_check_out")
+    path(quality_check_out)
     tuple val(sample_id), path(paired1), path(paired2)
     val index
     path 'genomeIndex.*.ht2'
@@ -111,19 +124,19 @@ process hisatMappingPairedEnd{
 
     script:
     if (params.intronLenght < 20) {
-        template 'hista2PairedNoSplicing.bash'
+        template 'hisat2PairedNoSplicing.bash'
     } else if (params.intronLenght >= 20) {
-        template 'hista2Paired.bash'
+        template 'hisat2Paired.bash'
     }
 
 }
 
 // Hisat mapping process for single end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process hisatMappingSingleEnd{
-    container = 'veupathdb/shortreadaligner'
+    container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
-    path("quality_check_out")
+    path(quality_check_out)
     tuple val(sample_id), path(paired1)
     val index 
     path 'genomeIndex.*.ht2'
@@ -133,9 +146,9 @@ process hisatMappingSingleEnd{
 
     script:
     if (params.intronLenght < 20) {
-        template 'hista2SingleNoSplicing.bash'
+        template 'hisat2SingleNoSplicing.bash'
     } else if (params.intronLenght >= 20) {
-        template 'hista2Single.bash'
+        template 'hisat2Single.bash'
     }
     
 }
@@ -159,7 +172,6 @@ process sortBams{
 process htseqCounting{
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
-    //container = 'genomicpariscentre/htseq'
     container = 'biocontainers/htseq:v0.11.2-1-deb-py3_cv1'
       
     input:
@@ -180,7 +192,7 @@ process htseqCounting{
 // Process to generate splice juctions
 process spliceCrossingReads{   
 
-    container = 'veupathdb/shortreadaligner' 
+    container = 'saikou'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -196,7 +208,7 @@ process spliceCrossingReads{
 
 // Generate bam statistic and bed files from the bam files.
 process bedBamStats{
-    container = 'veupathdb/shortreadaligner'
+    container = 'saikou'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -235,7 +247,8 @@ workflow rna_seq {
     }
 
         sortedByName = sortBams(hisat)
-        hisatCount = htseqCounting(sortedByName, "${params.annotation}")
+        hisatCount = htseqCounting(sortedByName, params.annotation)
         beds_stats = bedBamStats(hisat)
         spliceCounts = spliceCrossingReads(hisat)
+
 }

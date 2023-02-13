@@ -11,18 +11,6 @@ include { rna_seq } from  './modules/bulkRnaSeq.nf'
 // Param Checking 
 //---------------------------------------------------------------
 
-if (params.isPaired) {
-    isPairedEnd = 1
-} else {
-    isPairedEnd = 0
-}
-
-if (params.isStranded) {
-    strandSpecific = 1
-}else {
-    strandSpecific = 0
-}
-
 
  if(!params.reads) {
     throw new Exception("Missing parameter params.reads")
