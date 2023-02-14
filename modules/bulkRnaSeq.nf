@@ -75,7 +75,7 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-   // container = 'veupathdb/shortreadaligner:branch-saikou'
+   container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
     path(quality_check_out)
@@ -92,7 +92,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-    //container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner:branch-saikou'
 
     input:
     path(quality_check_out)
@@ -192,7 +192,7 @@ process htseqCounting{
 // Process to generate splice juctions
 process spliceCrossingReads{   
 
-    container = 'saikou'
+    container = 'veupathdb/shortreadaligner:branch-saikou'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -208,7 +208,7 @@ process spliceCrossingReads{
 
 // Generate bam statistic and bed files from the bam files.
 process bedBamStats{
-    container = 'saikou'
+    container = 'veupathdb/shortreadaligner:branch-saikou'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
