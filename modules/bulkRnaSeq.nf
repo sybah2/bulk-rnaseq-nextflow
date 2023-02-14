@@ -58,7 +58,7 @@ process qualityControl {
 // Fastqc_check process to get the phred encoding
 process fastqcCheck {
 
-    container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     tuple val(sample_id), path(fastqc_out)
@@ -75,7 +75,7 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-   container = 'veupathdb/shortreadaligner:branch-saikou'
+   container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -92,7 +92,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-    container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -111,7 +111,7 @@ process singleEndTrimming {
 }
 // Hisat mapping process for paired end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process hisatMappingPairedEnd{
-    container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -133,7 +133,7 @@ process hisatMappingPairedEnd{
 
 // Hisat mapping process for single end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process hisatMappingSingleEnd{
-    container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -192,7 +192,7 @@ process htseqCounting{
 // Process to generate splice juctions
 process spliceCrossingReads{   
 
-    container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -208,7 +208,7 @@ process spliceCrossingReads{
 
 // Generate bam statistic and bed files from the bam files.
 process bedBamStats{
-    container = 'veupathdb/shortreadaligner:branch-saikou'
+    container = 'veupathdb/shortreadaligner'
 
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
