@@ -13,7 +13,35 @@ if (params.isStranded) {
 }else {
     strandSpecific = 0
 }
+process sraDownloadPaired {
+    input:
+    val(sra)
 
+    output:
+    tuple val(sra), path("${sra}*"), emit: trim_sample
+    path("${sra}*"), emit: qc_sample
+
+    script:
+    template 'sraPairedDownload.bash'
+}
+//sraDownloadSingle
+process sraDownloadSingle {
+
+    input:
+    val(sra)
+
+    output:
+    path("${sra}*")
+
+    script:
+
+    template 'sraPairedDownload.bash'
+    
+    //"""
+    //fastq-dump --gzip ${sra}
+    //"""
+
+}
 // Hisat indexing process. 
 process hisatIndex {
 
@@ -75,7 +103,7 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-   container = 'veupathdb/shortreadaligner'
+   //container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -84,6 +112,7 @@ process paireEndTrimming {
 
     output:
     tuple val(sample_id), path("${sample_id}_paired_1.fq.gz"), path("${sample_id}_paired_2.fq.gz"), emit: trimmed_fastqs
+    //tuple path("${sample_id}_paired_1.fq.gz"), path("${sample_id}_paired_2.fq.gz"), emit: trimmed_fastqs
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
     
     script:
@@ -92,7 +121,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-    container = 'veupathdb/shortreadaligner'
+    //container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -229,15 +258,42 @@ workflow rna_seq {
         reads_ch
 
     main: 
+        if (params.local) 
+        {
         fastqc = qualityControl(reads_qc)
         chech_fastq = fastqcCheck(fastqc)
-  
+        }
+        
         index_ch = hisatIndex(params.reference)
  
-        if (params.isPaired) 
+        if (params.local && params.isPaired)
         {
             trim = paireEndTrimming(chech_fastq,reads_ch)
             hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+
+        } else if(!params.local && params.isPaired) 
+        {
+            sample = sraDownloadPaired(reads_ch) 
+            sample.trim_sample.view()
+            sample_qc = sample.qc_sample | flatten()
+            sample_qc.view()
+            
+            fastqc = qualityControl(sample_qc)
+            chech_fastq = fastqcCheck(fastqc)
+            trim = paireEndTrimming(chech_fastq, sample.trim_sample)
+            hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+    
+        } else if(!params.local && !params.isPaired) {
+            sample = sraDownloadSingle(reads_ch)
+            sample.view()
+            fastqc = qualityControl(sample)
+            chech_fastq = fastqcCheck(fastqc)
+            trim = singleEndTrimming(chech_fastq,sample)
+            hisat = hisatMappingSingleEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+            
+
+
+
         }
         else 
         {
@@ -246,9 +302,9 @@ workflow rna_seq {
     
     }
 
-        sortedByName = sortBams(hisat)
-        hisatCount = htseqCounting(sortedByName, params.annotation)
-        beds_stats = bedBamStats(hisat)
-        spliceCounts = spliceCrossingReads(hisat)
+        //sortedByName = sortBams(hisat)
+        //hisatCount = htseqCounting(sortedByName, params.annotation)
+        //beds_stats = bedBamStats(hisat)
+        //spliceCounts = spliceCrossingReads(hisat)
 
 }

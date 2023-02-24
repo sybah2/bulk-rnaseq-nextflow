@@ -1,4 +1,18 @@
 #!/usr/bin/env nextflow
+import nextflow.splitter.CsvSplitter
+nextflow.enable.dsl=2
+
+def fetchRunAccessions( tsv ) {
+    def splitter = new CsvSplitter().options( header:true, sep:'\t' )
+    def reader = new BufferedReader( new FileReader( tsv ) )
+    splitter.parseHeader( reader )
+    List<String> run_accessions = []
+    Map<String,String> row
+    while( row = splitter.fetchRecord( reader ) ) {
+       run_accessions.add( row['run_accession'] )
+    }
+    return run_accessions
+}
 
 //---------------------------------------
 // include the RNA seq workflow
@@ -31,9 +45,13 @@ if(!params.annotation) {
     reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
 
 // read_ch for trimming and mapping generated based on weather the sequencing is single or paired end.
-    if (params.isPaired){
+    if (params.local && params.isPaired){
         reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
-    } else {
+    } else if (!params.local) {
+        input = fetchRunAccessions(params.sraAccession)
+       reads_ch = Channel.fromList(input)
+    }
+    else {
         reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz'])
 
 }
