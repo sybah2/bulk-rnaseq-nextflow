@@ -29,7 +29,8 @@ process sraDownloadPaired {
 }
 // Download single reads
 process sraDownloadSingle {
-    container = 'veupathdb/bowtiemapping'
+    container = 'pegi3s/sratoolkit' 
+
     input:
     val(sra)
 
@@ -329,7 +330,7 @@ workflow rna_seq {
         } else if(!params.local && !params.isPaired) {
             
             sample = sraDownloadSingle(reads_ch)
-/*
+
             fastqc = qualityControl(sample)
 
             chech_fastq = fastqcCheck(fastqc) | first()
@@ -340,7 +341,7 @@ workflow rna_seq {
                     .splitFastq( by : params.splitChunk, file:true  )
 
             hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
-*/
+
         }
         else 
         {
@@ -356,7 +357,7 @@ workflow rna_seq {
             hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
     
     }
-/*
+
         sortedsam = sortSam(hisat) 
 
         samSet = sortedsam.groupTuple(sort: true)
@@ -370,5 +371,5 @@ workflow rna_seq {
         beds_stats = bedBamStats(mergeSam.bam)
 
         spliceCounts = spliceCrossingReads(mergeSam.bam)
-*/
+
 }
