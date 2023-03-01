@@ -44,7 +44,7 @@ if(!params.annotation) {
 
     reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
 
-// read_ch for trimming and mapping generated based on weather the sequencing is single or paired end.
+// read_ch for trimming and mapping generated based on weather the sequencing is single or paired end. If the input is SRA sample IDs they should be saved in csv file. 
     if (params.local && params.isPaired){
         reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
     } else if (!params.local) {

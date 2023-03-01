@@ -13,7 +13,10 @@ if (params.isStranded) {
 }else {
     strandSpecific = 0
 }
+
+// Download paired reads
 process sraDownloadPaired {
+    container = 'veupathdb/bowtiemapping'
     input:
     val(sra)
 
@@ -24,9 +27,9 @@ process sraDownloadPaired {
     script:
     template 'sraPairedDownload.bash'
 }
-//sraDownloadSingle
+// Download single reads
 process sraDownloadSingle {
-
+    container = 'veupathdb/bowtiemapping'
     input:
     val(sra)
 
@@ -35,12 +38,8 @@ process sraDownloadSingle {
 
     script:
 
-    template 'sraPairedDownload.bash'
+    template 'sraSingleDownload.bash'
     
-    //"""
-    //fastq-dump --gzip ${sra}
-    //"""
-
 }
 // Hisat indexing process. 
 process hisatIndex {
@@ -111,8 +110,8 @@ process paireEndTrimming {
 
 
     output:
-    tuple val(sample_id), path("${sample_id}_paired_1.fq.gz"), path("${sample_id}_paired_2.fq.gz"), emit: trimmed_fastqs
-    //tuple path("${sample_id}_paired_1.fq.gz"), path("${sample_id}_paired_2.fq.gz"), emit: trimmed_fastqs
+    val(sample_id), emit: sampleID
+    path("${sample_id}_paired*.fq.gz"), emit: trimmed_fastqs
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
     
     script:
@@ -121,7 +120,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-    //container = 'veupathdb/shortreadaligner'
+   // container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -129,7 +128,8 @@ process singleEndTrimming {
     
 
     output:
-    tuple val(sample_id), path("${sample_id}_trim.fq.gz"), emit: trimmed_fastqs
+    val(sample_id), emit: sampleID
+    path("${sample_id}_trim.fq.gz"), emit: trimmed_fastqs
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
 
     script:
@@ -144,14 +144,15 @@ process hisatMappingPairedEnd{
 
     input:
     path(quality_check_out)
-    tuple val(sample_id), path(paired1), path(paired2)
+    tuple path(paired1), path(paired2)
     val index
     path 'genomeIndex.*.ht2'
 
     output:
-    tuple val(sample_id), path("${sample_id}.bam")
+    path("${sample_id}.bam")
 
     script:
+    sample_id = paired1.getBaseName()
     if (params.intronLenght < 20) {
         template 'hisat2PairedNoSplicing.bash'
     } else if (params.intronLenght >= 20) {
@@ -166,19 +167,52 @@ process hisatMappingSingleEnd{
 
     input:
     path(quality_check_out)
-    tuple val(sample_id), path(paired1)
+    path(paired1)
     val index 
     path 'genomeIndex.*.ht2'
 
     output:
-    tuple val(sample_id), path("${sample_id}.bam")
+    path("${sample_id}.bam")
 
     script:
+    sample_id = paired1.getBaseName()
+
     if (params.intronLenght < 20) {
         template 'hisat2SingleNoSplicing.bash'
     } else if (params.intronLenght >= 20) {
         template 'hisat2Single.bash'
     }
+    
+}
+process sortSam {
+    container = 'veupathdb/shortreadaligner'
+    input:
+    path(sam)
+
+    output:
+    tuple val("${sample_base}"), path("*bam")
+
+    script:
+    split_name = sam.getBaseName()
+    sample_base = sam.getSimpleName()
+
+    template 'samSorting.bash'
+    
+}
+
+process mergeSams {
+    container = 'veupathdb/shortreadaligner'
+    input:
+    tuple val(sampleID), path("*.bam")
+    
+
+    output:
+    path("${sampleID}.bam"), emit: sam
+    tuple val(sampleID), path("*bam"), emit: bam
+
+    script:
+
+    template 'samMerge.bash'
     
 }
 
@@ -257,54 +291,84 @@ workflow rna_seq {
         reads_qc
         reads_ch
 
-    main: 
-        if (params.local) 
-        {
-        fastqc = qualityControl(reads_qc)
-        chech_fastq = fastqcCheck(fastqc)
-        }
-        
+    main:
         index_ch = hisatIndex(params.reference)
  
         if (params.local && params.isPaired)
-        {
+        {   
+            fastqc = qualityControl(reads_qc)
+
+            chech_fastq = fastqcCheck(fastqc) | first()
+
             trim = paireEndTrimming(chech_fastq,reads_ch)
-            hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+
+            reads = trim.trimmed_fastqs
+                    .splitFastq( by : params.splitChunk, pe: true, file:true  )
+
+            hisat = hisatMappingPairedEnd(chech_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files)
 
         } else if(!params.local && params.isPaired) 
         {
             sample = sraDownloadPaired(reads_ch) 
-            sample.trim_sample.view()
+
             sample_qc = sample.qc_sample | flatten()
-            sample_qc.view()
             
             fastqc = qualityControl(sample_qc)
-            chech_fastq = fastqcCheck(fastqc)
+
+            chech_fastq = fastqcCheck(fastqc) | first()
+
+            
             trim = paireEndTrimming(chech_fastq, sample.trim_sample)
-            hisat = hisatMappingPairedEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+
+            reads = trim.trimmed_fastqs
+                    .splitFastq( by : params.splitChunk, pe: true, file:true  )
+
+            hisat = hisatMappingPairedEnd(chech_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files)
+
     
         } else if(!params.local && !params.isPaired) {
-            sample = sraDownloadSingle(reads_ch)
-            sample.view()
-            fastqc = qualityControl(sample)
-            chech_fastq = fastqcCheck(fastqc)
-            trim = singleEndTrimming(chech_fastq,sample)
-            hisat = hisatMappingSingleEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
             
+            sample = sraDownloadSingle(reads_ch)
+/*
+            fastqc = qualityControl(sample)
 
+            chech_fastq = fastqcCheck(fastqc) | first()
 
+            trim = singleEndTrimming(chech_fastq,sample)
 
+            reads = trim.trimmed_fastqs
+                    .splitFastq( by : params.splitChunk, file:true  )
+
+            hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
+*/
         }
         else 
         {
+            fastqc = qualityControl(reads_ch)
+
+            chech_fastq = fastqcCheck(fastqc) | first()
+
             trim = singleEndTrimming(chech_fastq,reads_ch)
-            hisat = hisatMappingSingleEnd(chech_fastq,trim.trimmed_fastqs, index_ch.genome_index_name, index_ch.ht2_files) 
+            
+            reads = trim.trimmed_fastqs
+                    .splitFastq( by : params.splitChunk, file:true  )
+
+            hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
     
     }
+/*
+        sortedsam = sortSam(hisat) 
 
-        //sortedByName = sortBams(hisat)
-        //hisatCount = htseqCounting(sortedByName, params.annotation)
-        //beds_stats = bedBamStats(hisat)
-        //spliceCounts = spliceCrossingReads(hisat)
+        samSet = sortedsam.groupTuple(sort: true)
 
+        mergeSam = mergeSams(samSet)
+
+        sortedByName = sortBams(mergeSam.bam)
+
+        hisatCount = htseqCounting(sortedByName, params.annotation)
+
+        beds_stats = bedBamStats(mergeSam.bam)
+
+        spliceCounts = spliceCrossingReads(mergeSam.bam)
+*/
 }

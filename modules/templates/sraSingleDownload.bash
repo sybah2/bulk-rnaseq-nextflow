@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-fastq-dump --gzip ${sra}
+fastq-dump ${sra}

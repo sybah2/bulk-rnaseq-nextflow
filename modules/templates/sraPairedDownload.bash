@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-fasterq-dump --gzip --split-3 ${sra}
+fasterq-dump --split-3 ${sra}
