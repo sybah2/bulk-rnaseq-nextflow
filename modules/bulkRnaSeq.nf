@@ -103,7 +103,7 @@ process fastqcCheck {
  // Paired end trimming process
 process paireEndTrimming {
 
-   //container = 'veupathdb/shortreadaligner'
+   container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
@@ -121,7 +121,7 @@ process paireEndTrimming {
 // Single end process
 process singleEndTrimming {
 
-   // container = 'veupathdb/shortreadaligner'
+    container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
