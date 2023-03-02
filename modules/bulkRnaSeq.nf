@@ -296,8 +296,8 @@ workflow rna_seq {
         } else if(!params.local && params.isPaired) 
         {
             sample = downloadFiles(reads_ch)
+            
              
-
             sample_qc = sample.qc_sample | flatten()
             
             fastqc = qualityControl(sample_qc)
@@ -312,7 +312,7 @@ workflow rna_seq {
 
             hisat = hisatMappingPairedEnd(chech_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files)
 
-  
+
         } else if(!params.local && !params.isPaired) {
             
             sample = downloadFiles(reads_ch)
