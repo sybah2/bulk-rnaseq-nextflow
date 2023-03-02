@@ -14,34 +14,19 @@ if (params.isStranded) {
     strandSpecific = 0
 }
 
-// Download paired reads
-process sraDownloadPaired {
-    container = 'veupathdb/bowtiemapping'
-    input:
-    val(sra)
-
-    output:
-    tuple val(sra), path("${sra}*"), emit: trim_sample
-    path("${sra}*"), emit: qc_sample
-
-    script:
-    template 'sraPairedDownload.bash'
-}
-// Download single reads
-process sraDownloadSingle {
-    container = 'pegi3s/sratoolkit' 
-
-    input:
-    val(sra)
-
-    output:
-    path("${sra}*")
-
-    script:
-
-    template 'sraSingleDownload.bash'
+process downloadFiles {
+    //container = 'veupathdb/bowtiemapping'
+  
+  input:
+    val id
     
+  output:
+    path("${id}**.fastq")
+
+  script:
+    template 'downloadFiles.bash'
 }
+
 // Hisat indexing process. 
 process hisatIndex {
 
@@ -306,12 +291,13 @@ workflow rna_seq {
             reads = trim.trimmed_fastqs
                     .splitFastq( by : params.splitChunk, pe: true, file:true  )
 
-            hisat = hisatMappingPairedEnd(chech_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files)
+            hisat = hisatMappingPairedEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
 
         } else if(!params.local && params.isPaired) 
         {
-            sample = sraDownloadPaired(reads_ch) 
-
+            sample = downloadFiles(reads_ch)
+             
+/*
             sample_qc = sample.qc_sample | flatten()
             
             fastqc = qualityControl(sample_qc)
@@ -326,10 +312,10 @@ workflow rna_seq {
 
             hisat = hisatMappingPairedEnd(chech_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files)
 
-    
+ */   
         } else if(!params.local && !params.isPaired) {
             
-            sample = sraDownloadSingle(reads_ch)
+            sample = downloadFiles(reads_ch)
 
             fastqc = qualityControl(sample)
 
@@ -357,7 +343,7 @@ workflow rna_seq {
             hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
     
     }
-
+/*
         sortedsam = sortSam(hisat) 
 
         samSet = sortedsam.groupTuple(sort: true)
@@ -371,5 +357,5 @@ workflow rna_seq {
         beds_stats = bedBamStats(mergeSam.bam)
 
         spliceCounts = spliceCrossingReads(mergeSam.bam)
-
+*/
 }

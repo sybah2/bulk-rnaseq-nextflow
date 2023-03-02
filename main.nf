@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
-import nextflow.splitter.CsvSplitter
 nextflow.enable.dsl=2
+import nextflow.splitter.CsvSplitter
 
 def fetchRunAccessions( tsv ) {
     def splitter = new CsvSplitter().options( header:true, sep:'\t' )
@@ -49,7 +49,7 @@ if(!params.annotation) {
         reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
     } else if (!params.local) {
         input = fetchRunAccessions(params.sraAccession)
-       reads_ch = Channel.fromList(input)
+        reads_ch = Channel.fromList(input)
     }
     else {
         reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz'])
