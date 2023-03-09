@@ -26,8 +26,8 @@ include { rna_seq } from  './modules/bulkRnaSeq.nf'
 //---------------------------------------------------------------
 
 
- if(!params.reads) {
-    throw new Exception("Missing parameter params.reads")
+ if(!params.reads || !params.sraAccession) {
+    throw new Exception("Missing parameter params.reads, and params.sraAccession. Provide one of them")
   }
 if(!params.reference) {
     throw new Exception("Missing parameter params.reference")
@@ -41,18 +41,15 @@ if(!params.annotation) {
     throw new Exception("Missing parameter params.intronLenght")
   }
 
-
-    reads_qc = Channel.fromPath("${params.reads}/*", checkIfExists: true) 
-
 // read_ch for trimming and mapping generated based on weather the sequencing is single or paired end. If the input is SRA sample IDs they should be saved in csv file. 
     if (params.local && params.isPaired){
-        reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz'])
+        reads_ch = Channel.fromFilePairs([params.reads + '/*_{1,2}.fastq', params.reads + '/*_{1,2}.fastq.gz', params.reads + '/*_{1,2}.fq.gz', params.reads + '/*_{1,2}.fq'])
     } else if (!params.local) {
         input = fetchRunAccessions(params.sraAccession)
         reads_ch = Channel.fromList(input)
     }
     else {
-        reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz'])
+        reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz', params.reads + '/*.fq'])
 
 }
 
@@ -61,5 +58,5 @@ if(!params.annotation) {
 //-------------------------------------
 
 workflow {
-    rna_seq(reads_qc, reads_ch)
+    rna_seq( reads_ch)
 }

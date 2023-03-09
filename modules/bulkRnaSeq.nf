@@ -21,13 +21,13 @@ process downloadFiles {
     val id
     
   output:
-    path("${id}**.fastq")
+   tuple val(id), path("${id}**.fastq"), emit: trim
+   path("${id}**.fastq"), emit: qc_files
 
   script:
     template 'downloadFiles.bash'
 }
 
-// Hisat indexing process. 
 process hisatIndex {
 
     container = 'veupathdb/shortreadaligner'
@@ -51,7 +51,6 @@ process hisatIndex {
     """
 }
 
-// fastQC quality control process
 
 process qualityControl {
     container = 'biocontainers/fastqc:v0.11.9_cv7'
@@ -64,11 +63,11 @@ process qualityControl {
 
     script:
     sample_id = reads.getSimpleName()
+    
     template 'fastqc.bash'
 }
 
 
-// Fastqc_check process to get the phred encoding
 process fastqcCheck {
 
     container = 'veupathdb/shortreadaligner'
@@ -85,7 +84,6 @@ process fastqcCheck {
 
 }
  
- // Paired end trimming process
 process paireEndTrimming {
 
    container = 'veupathdb/shortreadaligner'
@@ -103,7 +101,7 @@ process paireEndTrimming {
     script:
     template 'trimmingPaired.bash'
 }
-// Single end process
+
 process singleEndTrimming {
 
     container = 'veupathdb/shortreadaligner'
@@ -124,7 +122,7 @@ process singleEndTrimming {
     template 'trimmingSingle.bash'
 
 }
-// Hisat mapping process for paired end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
+
 process hisatMappingPairedEnd{
     container = 'veupathdb/shortreadaligner'
 
@@ -139,21 +137,20 @@ process hisatMappingPairedEnd{
 
     script:
     sample_id = paired1.getBaseName()
-    if (params.intronLenght < 20) {
+    if (params.intronLength < 20) {
         template 'hisat2PairedNoSplicing.bash'
-    } else if (params.intronLenght >= 20) {
+    } else if (params.intronLength >= 20) {
         template 'hisat2Paired.bash'
     }
 
 }
 
-// Hisat mapping process for single end reads, taking into account weather the need for splice aware mapping or not, output coordiate sorted bam file
 process hisatMappingSingleEnd{
     container = 'veupathdb/shortreadaligner'
 
     input:
     path(quality_check_out)
-    path(paired1)
+    path(read)
     val index 
     path 'genomeIndex.*.ht2'
 
@@ -161,11 +158,11 @@ process hisatMappingSingleEnd{
     path("${sample_id}.bam")
 
     script:
-    sample_id = paired1.getBaseName()
+    sample_id = read.getBaseName()
 
-    if (params.intronLenght < 20) {
+    if (params.intronLength < 20) {
         template 'hisat2SingleNoSplicing.bash'
-    } else if (params.intronLenght >= 20) {
+    } else if (params.intronLength >= 20) {
         template 'hisat2Single.bash'
     }
     
@@ -202,7 +199,6 @@ process mergeSams {
     
 }
 
-// Process to sort bam file by names
 process sortBams{
     container = 'veupathdb/shortreadaligner'
 
@@ -217,7 +213,6 @@ process sortBams{
 
 }
 
-// HTSeq counting process, takes into account weather the sequencing is stranded or not. 
 process htseqCounting{
     publishDir "${params.results}/${sample_id}", mode: 'copy'
 
@@ -238,7 +233,7 @@ process htseqCounting{
     }
     
 }
-// Process to generate splice juctions
+
 process spliceCrossingReads{   
 
     container = 'veupathdb/shortreadaligner'
@@ -255,7 +250,7 @@ process spliceCrossingReads{
     template 'spliceCrossReads.bash'
 }
 
-// Generate bam statistic and bed files from the bam files.
+
 process bedBamStats{
     container = 'veupathdb/shortreadaligner'
 
@@ -270,11 +265,11 @@ process bedBamStats{
     script:
         template 'BedFileStats.bash'
 }
-// work flow difination
+
 workflow rna_seq {
 
     take:
-        reads_qc
+
         reads_ch
 
     main:
@@ -282,6 +277,8 @@ workflow rna_seq {
  
         if (params.local && params.isPaired)
         {   
+            reads_qc = reads_ch | flatten() | filter( ~/.*f.*q*/)
+            
             fastqc = qualityControl(reads_qc)
 
             chech_fastq = fastqcCheck(fastqc) | first()
@@ -297,37 +294,37 @@ workflow rna_seq {
         {
             sample = downloadFiles(reads_ch)
             
- /*            
-            sample_qc = sample.qc_sample | flatten()
-            
+            sample_qc = sample.qc_files | flatten()
+             
             fastqc = qualityControl(sample_qc)
 
             chech_fastq = fastqcCheck(fastqc) | first()
 
             
-            trim = paireEndTrimming(chech_fastq, sample.trim_sample)
+            trim = paireEndTrimming(chech_fastq, sample.trim)
 
             reads = trim.trimmed_fastqs
                     .splitFastq( by : params.splitChunk, pe: true, file:true  )
 
             hisat = hisatMappingPairedEnd(chech_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files)
 
-*/
+
         } else if(!params.local && !params.isPaired) {
             
             sample = downloadFiles(reads_ch)
 
-            fastqc = qualityControl(sample)
+            sample_qc = sample.qc_files | flatten()
+
+            fastqc = qualityControl(sample_qc)
 
             chech_fastq = fastqcCheck(fastqc) | first()
 
-            trim = singleEndTrimming(chech_fastq,sample)
+            trim = singleEndTrimming(chech_fastq,sample_qc)
 
             reads = trim.trimmed_fastqs
                     .splitFastq( by : params.splitChunk, file:true  )
 
             hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
-
         }
         else 
         {
@@ -343,7 +340,7 @@ workflow rna_seq {
             hisat = hisatMappingSingleEnd(chech_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files)
     
     }
-/*
+
         sortedsam = sortSam(hisat) 
 
         samSet = sortedsam.groupTuple(sort: true)
@@ -357,5 +354,5 @@ workflow rna_seq {
         beds_stats = bedBamStats(mergeSam.bam)
 
         spliceCounts = spliceCrossingReads(mergeSam.bam)
-*/
+
 }
