@@ -95,7 +95,7 @@ process paireEndTrimming {
 
     output:
     val(sample_id), emit: sampleID
-    path("${sample_id}_paired*.fq.gz"), emit: trimmed_fastqs
+    path("${sample_id}.{1,2}.fq.gz"), emit: trimmed_fastqs
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
     
     script:
@@ -113,7 +113,7 @@ process singleEndTrimming {
 
     output:
     val(sample_id), emit: sampleID
-    path("${sample_id}_trim.fq.gz"), emit: trimmed_fastqs
+    path("${sample_id}.fq.gz"), emit: trimmed_fastqs
     path("${sample_id}_Trimlog.txt"), emit: trimm_log
 
     script:
@@ -221,6 +221,7 @@ process htseqCounting{
     input:
     tuple val(sample_id), path(bam)
     path(annotation)
+    val(isCds)
 
     output:
     path("*.counts")
@@ -349,7 +350,7 @@ workflow rna_seq {
 
         sortedByName = sortBams(mergeSam.bam)
 
-        hisatCount = htseqCounting(sortedByName, params.annotation)
+        hisatCount = htseqCounting(sortedByName, params.annotation, params.isCds)
 
         beds_stats = bedBamStats(mergeSam.bam)
 
