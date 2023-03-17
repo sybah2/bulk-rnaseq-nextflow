@@ -28,6 +28,21 @@ process downloadFiles {
     template 'downloadFiles.bash'
 }
 
+process hisatNoIndex {
+
+    container = 'veupathdb/shortreadaligner'
+
+    input:
+    path(reference)
+
+    output: 
+    path 'genomeIndex*.ht2', emit: ht2_files
+    val 'genomeIndex' , emit: genome_index_name
+
+    script:
+      template 'hisat2NoIndex.bash'
+}
+
 process hisatIndex {
 
     container = 'veupathdb/shortreadaligner'
@@ -40,15 +55,7 @@ process hisatIndex {
     val 'genomeIndex' , emit: genome_index_name
 
     script:
-        if (params.createIndex) {
-            template 'hisat2Index.bash' 
-        } else {
-            template 'hisat2NoIndex.bash'
-        }
-    stub:
-    """
-    touch genomeIndex.1.ht2
-    """
+       template 'hisat2Index.bash'
 }
 
 
@@ -274,8 +281,14 @@ workflow rna_seq {
         reads_ch
 
     main:
-        index_ch = hisatIndex(params.reference)
+        if (params.createIndex) {
+            index_ch = hisatIndex(params.reference)
+        } else
+        {
+            index_ch = hisatNoIndex(params.hisat2Index)
+        }
  
+
         if (params.local && params.isPaired)
         {   
             reads_qc = reads_ch | flatten() | filter( ~/.*f.*q*/)
