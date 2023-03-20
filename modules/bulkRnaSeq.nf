@@ -20,8 +20,7 @@ process downloadFiles {
     val id
     
   output:
-    tuple val(id), path("${id}**.fastq"), emit: trim
-    path("${id}**.fastq"), emit: qc_files
+    tuple val(id), path("${id}**.fastq"), emit: samples
 
   script:
     template 'downloadFiles.bash'
@@ -47,13 +46,13 @@ process qualityControl {
   container = 'biocontainers/fastqc:v0.11.9_cv7'
     
   input:
-    path reads
+    tuple val(sample_id), path(reads)
 
   output:
-    tuple val(sample_id), path("${sample_id}_fastqc_out")
+    tuple val(sample_id), path("${sample_id}_fastqc_out"), emit: qcOutput
+    tuple val(sample_id), path(reads), emit: sample
 
   script:
-    sample_id = reads.getSimpleName()    
     template 'fastqc.bash'
 }
 
@@ -91,7 +90,7 @@ process singleEndTrimming {
 
   input:
     path(quality_check_out)
-    path(reads)  
+    tuple val(sample_id), path(reads)
 
   output:
     val(sample_id), emit: sampleID
@@ -239,45 +238,28 @@ workflow rna_seq {
 
     index_ch = hisatCreateIndex(params.createIndex, params.reference, params.hisat2Index)
 
-    if (params.local && params.isPaired)
-        {   
-            reads_qc = reads_ch | flatten() | filter( ~/.*f.*q*/)        
-            fastqc = qualityControl(reads_qc)
-            check_fastq = fastqcCheck(fastqc) | first()
-            trim = pairedEndTrimming(check_fastq,reads_ch)
-            reads = trim.trimmed_fastqs
-                    .splitFastq( by : params.splitChunk, pe: true, file:true  )
-            hisat = hisatMappingPairedEnd(check_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files, params.intronLength)
-        } else if(!params.local && params.isPaired) 
-        {
-            sample = downloadFiles(reads_ch)
-            sample_qc = sample.qc_files | flatten()
-            fastqc = qualityControl(sample_qc)
-            check_fastq = fastqcCheck(fastqc) | first()
-            trim = pairedEndTrimming(check_fastq, sample.trim)
-            reads = trim.trimmed_fastqs
-                    .splitFastq( by : params.splitChunk, pe: true, file:true  )
-            hisat = hisatMappingPairedEnd(check_fastq,reads,  index_ch.genome_index_name, index_ch.ht2_files, params.intronLength)
-        } else if(!params.local && !params.isPaired) {
-            sample = downloadFiles(reads_ch)
-            sample_qc = sample.qc_files | flatten()
-            fastqc = qualityControl(sample_qc)
-            check_fastq = fastqcCheck(fastqc) | first()
-            trim = singleEndTrimming(check_fastq,sample_qc)
-            reads = trim.trimmed_fastqs
-                    .splitFastq( by : params.splitChunk, file:true  )
-            hisat = hisatMappingSingleEnd(check_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files, params.intronLength)
-        }
-        else 
-        {
-            fastqc = qualityControl(reads_ch)
-            check_fastq = fastqcCheck(fastqc) | first()
-            trim = singleEndTrimming(check_fastq,reads_ch)
-            reads = trim.trimmed_fastqs
-                    .splitFastq( by : params.splitChunk, file:true  )
-            hisat = hisatMappingSingleEnd(check_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files, params.intronLength)
-        }
-	
+    if (params.local) {
+      fastqc = qualityControl(reads_ch)
+    }
+    else {
+      sample = downloadFiles(reads_ch)
+      fastqc = qualityControl(sample.samples)
+    }
+
+    check_fastq = fastqcCheck(fastqc.qcOutput) | first()
+
+    if (params.isPaired) {
+        trim = pairedEndTrimming(check_fastq,fastqc.sample)
+        reads = trim.trimmed_fastqs.splitFastq( by : params.splitChunk, pe: true, file:true)
+	reads.view()
+        hisat = hisatMappingPairedEnd(check_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files, params.intronLength) 
+    }
+    else {
+        trim = singleEndTrimming(check_fastq,fastqc.sample)
+        reads = trim.trimmed_fastqs.splitFastq( by : params.splitChunk, file:true  )
+        hisat = hisatMappingSingleEnd(check_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files, params.intronLength)
+    }
+
    sortedsam = sortSam(hisat) 
    samSet = sortedsam.groupTuple(sort: true)
    mergeSam = mergeSams(samSet)

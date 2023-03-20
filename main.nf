@@ -49,7 +49,7 @@ if(!params.annotation) {
         reads_ch = Channel.fromList(input)
     }
     else {
-        reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz', params.reads + '/*.fq'])
+        reads_ch = Channel.fromPath([params.reads + '/*.fastq', params.reads + '/*.fastq.gz', params.reads + '/*.fq.gz', params.reads + '/*.fq']).map { file -> tuple(file.baseName, [file]) }
 
 }
 
