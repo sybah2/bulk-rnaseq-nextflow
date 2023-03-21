@@ -251,7 +251,6 @@ workflow rna_seq {
     if (params.isPaired) {
         trim = pairedEndTrimming(check_fastq,fastqc.sample)
         reads = trim.trimmed_fastqs.splitFastq( by : params.splitChunk, pe: true, file:true)
-	reads.view()
         hisat = hisatMappingPairedEnd(check_fastq,reads, index_ch.genome_index_name, index_ch.ht2_files, params.intronLength) 
     }
     else {
