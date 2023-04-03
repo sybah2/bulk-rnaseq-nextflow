@@ -26,7 +26,7 @@ include { rna_seq } from  './modules/bulkRnaSeq.nf'
 //---------------------------------------------------------------
 
 
- if(!params.reads || !params.sraAccession) {
+ if(!params.reads && !params.sraAccession) {
     throw new Exception("Missing parameter params.reads, and params.sraAccession. Provide one of them")
   }
 if(!params.reference) {
