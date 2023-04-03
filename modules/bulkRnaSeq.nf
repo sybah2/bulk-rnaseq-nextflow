@@ -30,13 +30,14 @@ process hisatCreateIndex {
   container = 'veupathdb/shortreadaligner'
 
   input:
-    val createIndex
+    val(organismAbbv)
+    val(createIndex)
     path(reference)
     path(hisat2Index)
 
   output: 
-    path 'genomeIndex*.ht2', emit: ht2_files
-    val 'genomeIndex' , emit: genome_index_name
+    path "${organismAbbv}*.ht2", emit: ht2_files
+    val "${organismAbbv}" , emit: genome_index_name
 
   script:
     template 'hisat2CreateIndex.bash'
@@ -236,7 +237,7 @@ workflow rna_seq {
 
   main:
 
-    index_ch = hisatCreateIndex(params.createIndex, params.reference, params.hisat2Index)
+    index_ch = hisatCreateIndex(params.organismAbbv, params.createIndex, params.reference, params.hisat2Index)
 
     if (params.local) {
       fastqc = qualityControl(reads_ch)
