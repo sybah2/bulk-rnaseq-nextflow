@@ -26,13 +26,26 @@ process downloadFiles {
     template 'downloadFiles.bash'
 }
 
-process hisatCreateIndex {
+process createIndex {
   container = 'veupathdb/shortreadaligner'
 
   input:
     val(organismAbbv)
-    val(createIndex)
     path(reference)
+
+  output: 
+    path "${organismAbbv}*.ht2", emit: ht2_files
+    val "${organismAbbv}" , emit: genome_index_name
+
+  script:
+    template 'createIndex.bash'
+}
+
+process copyIndex {
+  container = 'veupathdb/shortreadaligner'
+
+  input:
+    val(organismAbbv)
     path(hisat2Index)
 
   output: 
@@ -40,7 +53,7 @@ process hisatCreateIndex {
     val "${organismAbbv}" , emit: genome_index_name
 
   script:
-    template 'hisat2CreateIndex.bash'
+    template 'copyIndex.bash'
 }
 
 process qualityControl {
@@ -237,8 +250,13 @@ workflow rna_seq {
 
   main:
 
-    index_ch = hisatCreateIndex(params.organismAbbv, params.createIndex, params.reference, params.hisat2Index)
-
+      if (params.createIndex){
+        index_ch = createIndex(params.organismAbbv, params.reference)
+      } else{
+        index_ch = copyIndex(params.organismAbbv, params.hisat2Index)
+      }
+    //index_ch = hisatCreateIndex(params.organismAbbv, params.createIndex) // start params.reference, // end,  params.hisat2Index
+/*
     if (params.local) {
       fastqc = qualityControl(reads_ch)
     }
@@ -267,5 +285,5 @@ workflow rna_seq {
    hisatCount = htseqCounting(sortedByName, params.annotation, params.isCds, params.isStranded)
    beds_stats = bedBamStats(mergeSam.bam)
    spliceCounts = spliceCrossingReads(mergeSam.bam)
-
+*/
 }
