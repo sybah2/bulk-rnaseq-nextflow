@@ -255,8 +255,8 @@ workflow rna_seq {
       } else{
         index_ch = copyIndex(params.organismAbbv, params.hisat2Index)
       }
-    //index_ch = hisatCreateIndex(params.organismAbbv, params.createIndex) // start params.reference, // end,  params.hisat2Index
-/*
+
+
     if (params.local) {
       fastqc = qualityControl(reads_ch)
     }
@@ -285,5 +285,5 @@ workflow rna_seq {
    hisatCount = htseqCounting(sortedByName, params.annotation, params.isCds, params.isStranded)
    beds_stats = bedBamStats(mergeSam.bam)
    spliceCounts = spliceCrossingReads(mergeSam.bam)
-*/
+
 }
