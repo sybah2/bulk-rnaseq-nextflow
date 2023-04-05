@@ -123,7 +123,7 @@ process hisatMappingPairedEnd{
     path(quality_check_out)
     tuple path(paired1), path(paired2)
     val index
-    path 'genomeIndex.*.ht2'
+    path "${organismAbbv}*.ht2"
     val intronLength
 
   output:
@@ -141,7 +141,7 @@ process hisatMappingSingleEnd{
     path(quality_check_out)
     path(read)
     val index 
-    path 'genomeIndex.*.ht2'
+    path "${organismAbbv}*.ht2"
     val intronLength
 
   output:
