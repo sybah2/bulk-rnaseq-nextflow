@@ -50,7 +50,7 @@ process copyIndex {
 
   output: 
     path "${organismAbbv}*.ht2", emit: ht2_files
-    val "${organismAbbv}" , emit: genome_index_name
+    val 'genomeIndex' , emit: genome_index_name
 
   script:
     template 'copyIndex.bash'
