@@ -35,7 +35,7 @@ process createIndex {
 
   output: 
     path "${organismAbbv}*.ht2", emit: ht2_files
-    val "${organismAbbv}" , emit: genome_index_name
+    val 'genomeIndex' , emit: genome_index_name
 
   script:
     template 'createIndex.bash'
@@ -123,7 +123,7 @@ process hisatMappingPairedEnd{
     path(quality_check_out)
     tuple path(paired1), path(paired2)
     val index
-    path "${organismAbbv}*.ht2"
+    path 'genomeIndex.*.ht2'
     val intronLength
 
   output:
@@ -141,7 +141,7 @@ process hisatMappingSingleEnd{
     path(quality_check_out)
     path(read)
     val index 
-    path "${organismAbbv}*.ht2"
+    path 'genomeIndex.*.ht2'
     val intronLength
 
   output:
