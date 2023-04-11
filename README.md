@@ -1,3 +1,3 @@
 # Bulk RNA-Seq analysis
 
-![Workflow](./BulkRnaSeqWorkflow.png)
+![Workflow](./BulkRnaSeqWorkflow.png, "Bulk RNA Seq Workflow Steps")
