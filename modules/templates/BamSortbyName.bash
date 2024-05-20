@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-samtools sort -n ${bam} -o "${sample_id}_sortedByName.bam"
+samtools sort -n ${bam} \
+        -o "${sample_id}_sortedByName.bam"

@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-samtools sort ${sam} -o ${split_name}_sorted.bam
+samtools sort ${sam} \
+            -o ${split_name}_sorted.bam

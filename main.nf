@@ -20,7 +20,6 @@ def fetchRunAccessions( tsv ) {
 
 include { rna_seq } from  './modules/bulkRnaSeq.nf'
 
-
 //---------------------------------------------------------------
 // Param Checking 
 //---------------------------------------------------------------

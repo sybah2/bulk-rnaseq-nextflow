@@ -2,4 +2,7 @@
 
 set -euo pipefail
 
-gsnapSplitBam.pl --mainResultDir . --strandSpecific ${strandSpecific} --isPairedEnd ${isPairedEnd} --bamFile ${bam}
+gsnapSplitBam.pl --mainResultDir . \
+                --strandSpecific ${strandSpecific} \
+                --isPairedEnd ${isPairedEnd} \
+                --bamFile ${bam}
