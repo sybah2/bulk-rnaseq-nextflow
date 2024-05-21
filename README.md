@@ -7,6 +7,8 @@ The quality of the FastQ file are determine using FastQC and trimming is done us
 The are mapped to the reference genome using HISAT. To enable fasting mapping the FastQ files are split to smaller chuck which are mapped individually and the respective bam files merge into one and sorted by coordinate. Then the mapping quality of the bam files is generated using Samtools. 
 <br />
 HTSeq is then used to count reads generating four outputs (count files) for stranded libraries: `genes.htseq-union.firststrand.counts`, `genes.htseq-union.secondstrand.count`, `genes.htseq-union.firststrand.nonunique.counts` and `genes.htseq-union.secondstrand.nonunique.counts`. And two count files for un-stranded library: `genes.htseq-union.unstranded.counts` and `genes.htseq-union.unstranded.nonunique.counts` representing unique and non-unique respectively. 
+<br />
+The workflow accept already downloaded FastQ files and also SRA accession number of FastQ files which will be automatically downloaded and analyze.
 
 
 **<p align=left>Get Started</p>**
@@ -19,12 +21,17 @@ To run the work the following dependencies need to be install
 * The pull the git hub repo using the following command
 > `git pull https://github.com/VEuPathDB/bulk-rnaseq-nextflow.git`
 
+* Alternatively the workflow can be run directly using nextflow which pull down the repo. 
+> `nextflow run VEuPathDB/bulk-rnaseq-nextflow -with-trace -c  <config_file> -r main``
+
 
 <br />
 <br />
 <br />
 
-## Workflow input
+* Input 
+** nextflow config
+** fastq files if locally available or csv file listing the accession number of FastQ files (one read per row)
 
 ***<p align=center>Nextflow workflow diagram</p>*** 
 ```mermaid
