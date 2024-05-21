@@ -1,8 +1,8 @@
 # <p align=center>Bulk RNA-Seq analysis</p>
 
-***<p align=center>Nextflow workflow</p>*** 
+This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq. 
 
-This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq
+***<p align=center>Nextflow workflow</p>*** 
 
 ```mermaid
 flowchart TD
