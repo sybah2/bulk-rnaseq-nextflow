@@ -13,7 +13,7 @@ HTSeq is then used to count reads generating four outputs (count files) for stra
 To run the work the following dependencies need to be install
 * Docker
 * Nextflow
-> url https://get.nextflow.io | bash
+> `curl https://get.nextflow.io | bash`
 
 
 
