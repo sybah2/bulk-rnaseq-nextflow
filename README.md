@@ -2,7 +2,9 @@
 
 This nextflow workflow is for the QC, mapping and read counting of bulk RNA-Seq. The workflow accept and analyze both single and paired end RNA-Seq data.  
 The quality of the FastQ file are determine using FastQC and trimming is done used trimmomatic with these parameters `LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20` taking into account the quality score of the reads.
+<br />
 The are mapped to the reference genome using HISAT. To enable fasting mapping the FastQ files are split to smaller chuck which are mapped individually and the respective bam files merge into one and sorted by coordinate. Then the mapping quality of the bam files is generated using Samtools. 
+<br />
 HTSeq is then used to count reads generating four outputs (count files) for stranded libraries: `genes.htseq-union.firststrand.counts`, `genes.htseq-union.secondstrand.count`, `genes.htseq-union.firststrand.nonunique.counts` and `genes.htseq-union.secondstrand.nonunique.counts`. And two count files for un-stranded library: `genes.htseq-union.unstranded.counts` and `genes.htseq-union.unstranded.nonunique.counts` representing unique and non-unique respectively. 
 
 
