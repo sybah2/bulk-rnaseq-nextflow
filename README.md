@@ -16,7 +16,6 @@ To run the work the following dependencies need to be install
 * Nextflow
 > `curl https://get.nextflow.io | bash`
 
-<br />
 * The pull the git hub repo using the following command
 > `git pull https://github.com/VEuPathDB/bulk-rnaseq-nextflow.git`
 
