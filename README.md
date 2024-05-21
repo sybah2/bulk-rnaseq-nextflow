@@ -22,7 +22,7 @@ To run the work the following dependencies need to be install
 > `git pull https://github.com/VEuPathDB/bulk-rnaseq-nextflow.git`
 
 * Alternatively the workflow can be run directly using nextflow which pull down the repo. 
-> `nextflow run VEuPathDB/bulk-rnaseq-nextflow -with-trace -c  <config_file> -r main``
+> `nextflow run VEuPathDB/bulk-rnaseq-nextflow -with-trace -c  <config_file> -r main`
 
 
 <br />
