@@ -5,7 +5,9 @@ This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq.
 
 
 
-
+<br />
+<br />
+<br />
 
 ***<p align=center>Nextflow workflow</p>*** 
 ```mermaid
