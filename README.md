@@ -24,6 +24,8 @@ To run the work the following dependencies need to be install
 <br />
 <br />
 
+# Workflow input
+
 ***<p align=center>Nextflow workflow diagram</p>*** 
 ```mermaid
 flowchart TD
