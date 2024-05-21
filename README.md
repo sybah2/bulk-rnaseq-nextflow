@@ -8,7 +8,7 @@ The are mapped to the reference genome using HISAT. To enable fasting mapping th
 HTSeq is then used to count reads generating four outputs (count files) for stranded libraries: `genes.htseq-union.firststrand.counts`, `genes.htseq-union.secondstrand.count`, `genes.htseq-union.firststrand.nonunique.counts` and `genes.htseq-union.secondstrand.nonunique.counts`. And two count files for un-stranded library: `genes.htseq-union.unstranded.counts` and `genes.htseq-union.unstranded.nonunique.counts` representing unique and non-unique respectively. 
 
 
-
+**<p align=center>Running the workflow</p>**
 
 
 
