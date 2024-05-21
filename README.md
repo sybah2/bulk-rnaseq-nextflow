@@ -1,5 +1,6 @@
 # <p align=center>Bulk RNA-Seq analysis</p>
 
+**<p align=left>What the workflow does</p>**
 This nextflow workflow is for the QC, mapping and read counting of bulk RNA-Seq. The workflow accept and analyze both single and paired end RNA-Seq data.  
 The quality of the FastQ file are determine using FastQC and trimming is done used trimmomatic with these parameters `LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20` taking into account the quality score of the reads.
 <br />
@@ -9,6 +10,9 @@ HTSeq is then used to count reads generating four outputs (count files) for stra
 
 
 **<p align=left>Running the workflow</p>**
+To run the work the following dependencies need to be install
+* Docker
+* Nextflow
 
 
 
