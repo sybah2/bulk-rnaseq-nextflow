@@ -1,6 +1,8 @@
 # <p align=center>Bulk RNA-Seq analysis</p>
 
-This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq. 
+This nextflow workflow is for the QC, mapping and read counting of bulk RNA-Seq. 
+The quality of the FastQ file are determine using FastQC and trimming is done used trimmomatic with these parameters `LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:20`.
+
 
 
 
@@ -9,7 +11,7 @@ This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq.
 <br />
 <br />
 
-***<p align=center>Nextflow workflow</p>*** 
+***<p align=center>Nextflow workflow diagram</p>*** 
 ```mermaid
 flowchart TD
     p0((Channel.fromFilePairs))
