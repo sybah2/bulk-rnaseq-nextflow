@@ -2,6 +2,8 @@
 
 ***<p align=center>Nextflow workflow</p>*** 
 
+This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq
+
 ```mermaid
 flowchart TD
     p0((Channel.fromFilePairs))
