@@ -2,8 +2,12 @@
 
 This nextflow graph is for the QC, mapping and read counting of bulk RNA-Seq. 
 
-***<p align=center>Nextflow workflow</p>*** 
 
+
+
+
+
+***<p align=center>Nextflow workflow</p>*** 
 ```mermaid
 flowchart TD
     p0((Channel.fromFilePairs))
