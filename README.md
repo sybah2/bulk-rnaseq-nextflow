@@ -12,9 +12,13 @@ HTSeq is then used to count reads generating four outputs (count files) for stra
 **<p align=left>Running the workflow</p>**
 To run the work the following dependencies need to be install
 * Docker
+> `https://docs.docker.com/engine/install/`
 * Nextflow
 > `curl https://get.nextflow.io | bash`
 
+<br />
+* The pull the git hub repo using the following command
+> `git pull https://github.com/VEuPathDB/bulk-rnaseq-nextflow.git`
 
 
 <br />
