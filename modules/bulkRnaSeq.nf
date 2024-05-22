@@ -13,6 +13,14 @@ if (params.isPaired) {
     isPairedEnd = 0
 }
 
+/*
+This procees down the fastq file from the sequence read archive if needed
+
+@val is the accession number for he fastq file
+
+Output is the fastq file
+*/
+
 process downloadFiles {
   container = 'veupathdb/bowtiemapping'
   
@@ -25,6 +33,11 @@ process downloadFiles {
   script:
     template 'downloadFiles.bash'
 }
+
+/*
+This pocess create the index file of the reference genome using hisat2
+
+*/
 
 process createIndex {
   container = 'veupathdb/shortreadaligner'
@@ -41,6 +54,10 @@ process createIndex {
     template 'createIndex.bash'
 }
 
+/*
+If the index is already generated this process copy the index files to the right location
+
+*/
 process copyIndex {
   container = 'veupathdb/shortreadaligner'
 
@@ -56,6 +73,10 @@ process copyIndex {
     template 'copyIndex.bash'
 }
 
+/*
+Perform the quality control of the fastq files
+*/
+
 process qualityControl {
   container = 'biocontainers/fastqc:v0.11.9_cv7'
     
@@ -70,6 +91,10 @@ process qualityControl {
     template 'fastqc.bash'
 }
 
+/*
+This process does the fastqc check to determine the QC for each read to be used for the trimming
+*/
+
 process fastqcCheck {
   container = 'veupathdb/shortreadaligner'
 
@@ -82,7 +107,10 @@ process fastqcCheck {
   script:
     template 'fastqc_check.bash'
 }
- 
+
+/*
+Quality trimming for paired end reads
+*/
 process pairedEndTrimming {
   container = 'veupathdb/shortreadaligner'
 
@@ -99,6 +127,9 @@ process pairedEndTrimming {
     template 'trimmingPaired.bash'
 }
 
+/*
+Quality trimming for single end reads
+*/
 process singleEndTrimming {
   container = 'veupathdb/shortreadaligner'
 
@@ -116,6 +147,9 @@ process singleEndTrimming {
     template 'trimmingSingle.bash'
 }
 
+/*
+Hisat mapping for paired end reads. This process split each fastq files for faster mapping
+*/
 process hisatMappingPairedEnd{
   container = 'veupathdb/shortreadaligner'
 
@@ -133,6 +167,10 @@ process hisatMappingPairedEnd{
     sample_id = paired1.getBaseName()
     template 'hisatMappingPairedEnd.bash'
 }
+
+/*
+Hisat mapping for single end reads. This process split each fastq files for faster mapping
+*/
 
 process hisatMappingSingleEnd{
   container = 'veupathdb/shortreadaligner'
@@ -152,6 +190,10 @@ process hisatMappingSingleEnd{
     template 'hisatMappingSingleEnd.bash'
 }
 
+/*
+This process sort the alignment file
+*/
+
 process sortSam {
   container = 'veupathdb/shortreadaligner'
 
@@ -167,6 +209,9 @@ process sortSam {
     template 'samSorting.bash'  
 }
 
+/*
+This process merge the alignment file for each sample into one bam file
+*/
 process mergeSams {
   container = 'veupathdb/shortreadaligner'
 
@@ -181,6 +226,9 @@ process mergeSams {
     template 'samMerge.bash'
 }
 
+/*
+This process sort the merge bam file
+*/
 process sortBams{
   container = 'veupathdb/shortreadaligner'
 
@@ -193,6 +241,9 @@ process sortBams{
   script:
     template 'BamSortbyName.bash'
 }
+/*
+This process does the counting of the reads that map onto each genes
+*/
 
 process htseqCounting{
   publishDir "${params.results}/${sample_id}", mode: 'copy'
@@ -211,6 +262,9 @@ process htseqCounting{
   script:
     template 'htseqCounting.bash'    
 }
+/*
+This process determine splice crossing reads
+*/
 
 process spliceCrossingReads{   
   container = 'veupathdb/shortreadaligner'
@@ -227,6 +281,9 @@ process spliceCrossingReads{
     template 'spliceCrossReads.bash'
 }
 
+/*
+The process generate the statistics for the alignment file
+*/
 process bedBamStats{
   container = 'veupathdb/shortreadaligner'
 
