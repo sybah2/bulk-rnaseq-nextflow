@@ -32,13 +32,26 @@ To run the work the following dependencies need to be install
 <br />
 
 **<p align=left>Input Data</p>**
-* nextflow config
+Example data can be found in the data directory. 
+* nextflow configA
 > The nextflow config file (`nextflow.config`) contain the configuration for analysis. File paths to where the sequence reads, reference genome and output directory are specify in the config file. See example in workflow parent directory. 
 * Input Fastq files
 > If the Fastq files are already downloaded they should be store under the data folder. If the data is not downloaded the SRA accession number need to be specified in a csv file and its path set in the config file. 
 * Reference genome
 > The reference genome should be added in a folder under data and its path specify in config file (See example in the data folder).
 
+**<p align=left>Output Data</p>**
+Depending on weather the library is stranded or not the following output are generated and found in the results folder
+
+* Stranded
+> `genes.htseq-union.firststrand.counts`
+> `genes.htseq-union.secondstrand.count`
+> `genes.htseq-union.firststrand.nonunique.counts`
+> `genes.htseq-union.secondstrand.nonunique.counts`
+
+* Un-stranded 
+> `genes.htseq-union.unstranded.counts`
+> `genes.htseq-union.unstranded.nonunique.counts`
 ***<p align=center>Nextflow workflow diagram</p>*** 
 ```mermaid
 flowchart TD
