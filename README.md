@@ -31,7 +31,7 @@ To run the work the following dependencies need to be install
 <br />
 <br />
 
-**<p align=left>Data input</p>**
+**<p align=left>Input Data</p>**
 * nextflow config
 > The nextflow config file (`nextflow.config`) contain the configuration for analysis. File paths to where the sequence reads, reference genome and output directory are specify in the config file. See example in workflow parent directory. 
 * Input Fastq files
