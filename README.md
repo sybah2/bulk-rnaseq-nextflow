@@ -36,6 +36,8 @@ To run the work the following dependencies need to be install
 > The nextflow config file (`nextflow.config`) contain the configuration for analysis. File paths to where the sequence reads, reference genome and output directory are specify in the config file. See example in workflow parent directory. 
 * Input Fastq files
 > If the Fastq files are already downloaded they should be store under the data folder. If the data is not downloaded the SRA accession number need to be specified in a csv file and its path set in the config file. 
+* Reference genome
+> The reference genome should be added in a folder under data and its path specify in config file (See example in the data folder).
 
 ***<p align=center>Nextflow workflow diagram</p>*** 
 ```mermaid
