@@ -44,14 +44,10 @@ Example data can be found in the data directory.
 Depending on weather the library is stranded or not the following output are generated and found in the results folder
 
 * Stranded
-> `genes.htseq-union.firststrand.counts`
-> `genes.htseq-union.secondstrand.count`
-> `genes.htseq-union.firststrand.nonunique.counts`
-> `genes.htseq-union.secondstrand.nonunique.counts`
+> `genes.htseq-union.firststrand.counts`, `genes.htseq-union.secondstrand.count`, `genes.htseq-union.firststrand.nonunique.counts` and `genes.htseq-union.secondstrand.nonunique.counts`
 
 * Un-stranded 
-> `genes.htseq-union.unstranded.counts`
-> `genes.htseq-union.unstranded.nonunique.counts`
+> `genes.htseq-union.unstranded.counts` and `genes.htseq-union.unstranded.nonunique.counts`
 ***<p align=center>Nextflow workflow diagram</p>*** 
 ```mermaid
 flowchart TD
